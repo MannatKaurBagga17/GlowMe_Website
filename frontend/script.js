@@ -4,14 +4,12 @@
 /* ═══════════════════════════════════════════════════════════
    GLOWME CONFIG — Yahan se sab kuch set karo
    ═══════════════════════════════════════════════════════════
-   Razorpay key:   Dashboard → Settings → API Keys
-   Test keys start with rzp_test_  |  Live with rzp_live_
    Owner WhatsApp: 91 + 10-digit number (no + sign, no spaces)
+   Razorpay keys: backend/.env only (Key ID returned from POST /api/orders)
    ═══════════════════════════════════════════════════════════ */
 const CONFIG = {
-  RAZORPAY_KEY:       'rzp_test_XXXXXXXXXXXXXXXX', // ← Replace with your key
   ANTHROPIC_KEY:      '',                           // ← Claude API key (needs backend proxy for production)
-  OWNER_WHATSAPP:     '919876543210',               // ← Aapka number: 91 + 10 digits
+  OWNER_WHATSAPP:     '919877998375',               // ← Aapka number: 91 + 10 digits
   ARTIST_LISTING_FEE: 999,                          // ← Artist ko kitna charge karna hai (₹)
 };
 window.GLOWME_API_KEY = CONFIG.ANTHROPIC_KEY;
@@ -39,40 +37,85 @@ function chMonth(d){curM+=d;if(curM>11){curM=0;curY++;}if(curM<0){curM=11;curY--
 function renderCal(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('calMonthName').textContent=months[curM]+' '+curY;const first=new Date(curY,curM,1).getDay();const days=new Date(curY,curM+1,0).getDate();const today=new Date();let html='';for(let i=0;i<first;i++)html+='<div class="cd empty"></div>';for(let d=1;d<=days;d++){const st=getStatus(d,curM,curY);const isToday=d===today.getDate()&&curM===today.getMonth()&&curY===today.getFullYear();const isSel=d===selDay;let cls='cd '+st;if(isToday)cls+=' today';if(isSel)cls='cd sel';const click=(st==='avail'||st==='advance')?'onclick="pickDay('+d+',\''+st+'\')"':'';html+='<div class="'+cls+'" '+click+'>'+d+'</div>';}document.getElementById('calGrid').innerHTML=html;}
 function pickDay(d,st){selDay=d;selTime=null;renderCal();const months=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('selDateLbl').textContent=d+' '+months[curM]+' '+curY;const slots=getSlots(d);document.getElementById('timeSlots').innerHTML=slots.map(s=>'<div class="ts'+(s.taken?' taken':'')+'" '+(s.taken?'':'onclick="pickTime(this,\''+s.time+'\')"')+'>'+s.time+(s.taken?'<br>Booked':'')+'</div>').join('');document.getElementById('timeSection').style.display='block';updateSum();}
 function pickTime(el,t){document.querySelectorAll('.ts').forEach(s=>s.classList.remove('tsel'));el.classList.add('tsel');selTime=t;updateSum();}
-function updateSum(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];const s=document.getElementById('bookSum');if(!selSvc&&!selDay){s.innerHTML='Select a service and date to continue.';return;}const price=Math.max(2000,(selSvc||'').length*180);const dep=Math.round(price*0.3/100)*100;s.innerHTML='<strong>Artist</strong> '+curArtist+'<br><strong>Service</strong> '+(selSvc||'Not selected')+'<br><strong>Date</strong> '+(selDay?selDay+' '+months[curM]+' '+curY:'Not selected')+'<br><strong>Time</strong> '+(selTime||'Not selected')+'<br><strong>Total price</strong> Rs '+price.toLocaleString('en-IN')+'<br><strong>Deposit now 30%</strong> Rs '+dep.toLocaleString('en-IN');}
-function confirmBook(){
+function updateSum(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];const s=document.getElementById('bookSum');if(!selSvc&&!selDay){s.innerHTML='Select a service and date to continue.';return;}const price=Math.max(2000,(selSvc||'').length*180);const dep=Math.round(price*0.3/100)*100;s.innerHTML='<strong>Artist</strong> '+curArtist+'<br><strong>Service</strong> '+(selSvc||'Not selected')+'<br><strong>Date</strong> '+(selDay?selDay+' '+months[curM]+' '+curY:'Not selected')+'<br><strong>Time</strong> '+(selTime||'Not selected')+'<br><strong>Total price</strong> Rs '+price.toLocaleString('en-IN')+'<br><strong>Deposit now 50%</strong> Rs '+dep.toLocaleString('en-IN');}
+async function confirmBook(){
   if(!selSvc||!selDay||!selTime){alert('Please select a service, date, and time slot.');return;}
   if(typeof Razorpay==='undefined'){showToast('Payment gateway load ho raha hai, ek second ruko...','error');return;}
-  const price=Math.max(2000,(selSvc||'').length*180);
-  const dep=Math.round(price*0.3/100)*100;
+  const btn=document.querySelector('.confirm-btn');
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const rzp=new Razorpay({
-    key:CONFIG.RAZORPAY_KEY,
-    amount:dep*100, // paise mein
-    currency:'INR',
-    name:'GlowMe',
-    description:`${selSvc} · ${curArtist} · ${selDay} ${months[curM]}`,
-    handler:function(response){
-      // Payment success
-      const btn=document.querySelector('.confirm-btn');
-      btn.textContent='✓ Payment received! Booking confirmed.';
-      btn.style.background='#2D6A4F';
-      btn.style.color='#fff';
-      // Owner ko WhatsApp notification
-      const ownerMsg=`🌸 *New GlowMe Booking!*\n\n👤 Artist: ${curArtist}\n💄 Service: ${selSvc}\n📅 Date: ${selDay} ${months[curM]} ${curY}\n⏰ Time: ${selTime}\n💳 Deposit: ₹${dep.toLocaleString('en-IN')}\n🆔 Payment ID: ${response.razorpay_payment_id}`;
-      setTimeout(()=>{
-        window.open(`https://wa.me/${CONFIG.OWNER_WHATSAPP}?text=${encodeURIComponent(ownerMsg)}`,'_blank');
-        showToast('✓ Booking confirmed! WhatsApp confirmation check karo.');
-        closeCal();
-        btn.textContent='Confirm and pay 30% deposit';
-        btn.style.background='';btn.style.color='';
-      },1200);
-    },
-    prefill:{name:'',email:'',contact:''},
-    theme:{color:'#C9A96E'},
-    modal:{ondismiss:()=>showToast('Payment cancel hua. Slot 10 min ke liye hold hai.','error')}
-  });
-  rzp.open();
+  const dateStr=`${selDay} ${months[curM]} ${curY}`;
+  const origText=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='Creating order...';
+  try{
+    const orderRes=await fetch('/api/orders',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({artist:curArtist,service:selSvc,date:dateStr,time:selTime}),
+    });
+    const orderData=await orderRes.json();
+    if(!orderRes.ok)throw new Error(orderData.error||'Could not create order');
+    btn.textContent='Opening payment...';
+    const dep=orderData.depositInr;
+    const rzp=new Razorpay({
+      key:orderData.keyId,
+      order_id:orderData.orderId,
+      amount:orderData.amount,
+      currency:orderData.currency,
+      name:'GlowMe',
+      description:`${selSvc} · ${curArtist} · ${selDay} ${months[curM]}`,
+      handler:async function(response){
+        btn.textContent='Verifying payment...';
+        try{
+          const verifyRes=await fetch('/api/payments/verify',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+              razorpay_order_id:response.razorpay_order_id,
+              razorpay_payment_id:response.razorpay_payment_id,
+              razorpay_signature:response.razorpay_signature,
+            }),
+          });
+          const verifyData=await verifyRes.json();
+          if(!verifyRes.ok||!verifyData.ok)throw new Error(verifyData.error||'Payment verification failed');
+          btn.textContent='✓ Payment received! Booking confirmed.';
+          btn.style.background='#2D6A4F';
+          btn.style.color='#fff';
+          const ownerMsg=`🌸 *New GlowMe Booking!*\n\n👤 Artist: ${curArtist}\n💄 Service: ${selSvc}\n📅 Date: ${dateStr}\n⏰ Time: ${selTime}\n💳 Deposit: ₹${dep.toLocaleString('en-IN')}\n🆔 Payment ID: ${response.razorpay_payment_id}`;
+          setTimeout(()=>{
+            window.open(`https://wa.me/${CONFIG.OWNER_WHATSAPP}?text=${encodeURIComponent(ownerMsg)}`,'_blank');
+            showToast('✓ Booking confirmed! WhatsApp confirmation check karo.');
+            closeCal();
+            btn.textContent=origText;
+            btn.style.background='';
+            btn.style.color='';
+            btn.disabled=false;
+          },1200);
+        }catch(err){
+          showToast(err.message||'Verification failed','error');
+          btn.textContent=origText;
+          btn.disabled=false;
+        }
+      },
+      prefill:{name:'',email:'',contact:''},
+      theme:{color:'#C9A96E'},
+      modal:{ondismiss:()=>{
+        showToast('Payment cancel hua. Slot 10 min ke liye hold hai.','error');
+        btn.textContent=origText;
+        btn.disabled=false;
+      }},
+    });
+    rzp.on('payment.failed',()=>{
+      showToast('Payment failed. Please try again.','error');
+      btn.textContent=origText;
+      btn.disabled=false;
+    });
+    rzp.open();
+  }catch(err){
+    showToast(err.message||'Could not start payment','error');
+    btn.textContent=origText;
+    btn.disabled=false;
+  }
 }
 let chatOpen=false,chatHist=[],isSend=false;
 function toggleChat(){chatOpen=!chatOpen;document.getElementById('chat-window').classList.toggle('open',chatOpen);if(chatOpen&&chatHist.length===0){setTimeout(()=>addAI('Welcome to GlowMe. I am your personal beauty concierge here to help you find the perfect artist, check availability, or answer any questions. How may I assist you today?'),400);}if(chatOpen)setTimeout(()=>document.getElementById('chat-input').focus(),350);}
@@ -551,21 +594,7 @@ function payArtistFee(){
   if(typeof Razorpay==='undefined'){
     showToast('Payment gateway load ho raha hai, try again.','error');return;
   }
-
-  const rzp=new Razorpay({
-    key:CONFIG.RAZORPAY_KEY,
-    amount:CONFIG.ARTIST_LISTING_FEE*100,
-    currency:'INR',
-    name:'GlowMe',
-    description:'Artist Listing Fee — One-time registration',
-    handler:function(response){
-      artistPaymentSuccess({name,phone,email,city,category,specs,exp,portfolio,bio},response);
-    },
-    prefill:{name,email,contact:'91'+phone},
-    theme:{color:'#C9A96E'},
-    modal:{ondismiss:()=>showToast('Payment cancel hua. Koi baat nahi, dobara try karo.','error')}
-  });
-  rzp.open();
+  showToast('Artist listing payment — server integration coming soon. Booking deposit works now.','error');
 }
 
 function artistPaymentSuccess(data,response){

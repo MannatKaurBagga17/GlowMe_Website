@@ -79,6 +79,37 @@ Invoke-RestMethod -Uri "http://localhost:3000/api/orders" -Method POST -ContentT
 
 `GET /api/health` now includes `"razorpay": true` when keys are configured.
 
+## Step 2.4 — Verify payment signature
+
+After Razorpay Checkout succeeds, the browser gets `razorpay_order_id`, `razorpay_payment_id`, and `razorpay_signature`. The server must verify the signature before treating the booking as paid.
+
+**Endpoint:** `POST /api/payments/verify`
+
+```json
+{
+  "razorpay_order_id": "order_...",
+  "razorpay_payment_id": "pay_...",
+  "razorpay_signature": "..."
+}
+```
+
+**Success (200):** `{ "ok": true, "orderId": "...", "paymentId": "..." }`  
+**Invalid signature (400):** `{ "ok": false, "error": "Invalid payment signature" }`
+
+## Step 2.5 — End-to-end booking payment (UI)
+
+With `npm run dev` running and test keys in `backend/.env`:
+
+1. Open http://localhost:3000
+2. Click **Calendar** on any artist → select service, date, time
+3. Click **Confirm and pay 30% deposit**
+4. Razorpay test checkout opens (use test card from [Razorpay docs](https://razorpay.com/docs/payments/payments/test-card-upi-details/))
+5. After pay: server verifies signature → success toast → WhatsApp opens
+
+Flow: `POST /api/orders` → Checkout (`order_id` + `keyId`) → `POST /api/payments/verify` → confirm UI.
+
+**Note:** Artist listing fee (`payArtistFee`) is not wired to the server yet — booking deposit only.
+
 ## Razorpay
 
 - **Key ID** (`rzp_test_...`) — public; used by Checkout in the browser later
