@@ -2,7 +2,8 @@
  * GlowMe dev server
  * - Serves frontend/
  * - GET  /api/health
- * - POST /api/orders  (Razorpay test order for booking deposit)
+ * - POST /api/orders           (Razorpay test order for booking deposit)
+ * - POST /api/payments/verify  (HMAC signature check after Checkout)
  */
 import http from 'http';
 import fs from 'fs/promises';
@@ -10,6 +11,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import Razorpay from 'razorpay';
 import { computeBookingDeposit } from './pricing.js';
+import { verifyPaymentSignature } from './verifyPayment.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_ROOT = path.resolve(__dirname, '..', 'frontend');
@@ -142,6 +144,51 @@ async function handleCreateOrder(req, res) {
   }
 }
 
+async function handleVerifyPayment(req, res) {
+  if (!razorpayConfigured()) {
+    sendJson(res, 503, {
+      error: 'Razorpay is not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in backend/.env',
+    });
+    return;
+  }
+
+  let body;
+  try {
+    body = await readJsonBody(req);
+  } catch (err) {
+    if (err.message === 'BODY_TOO_LARGE') {
+      sendJson(res, 413, { error: 'Request body too large' });
+      return;
+    }
+    sendJson(res, 400, { error: 'Invalid JSON body' });
+    return;
+  }
+
+  const orderId = pickString(body, 'razorpay_order_id');
+  const paymentId = pickString(body, 'razorpay_payment_id');
+  const signature = pickString(body, 'razorpay_signature');
+
+  if (!orderId || !paymentId || !signature) {
+    sendJson(res, 400, {
+      error: 'Missing required fields: razorpay_order_id, razorpay_payment_id, razorpay_signature',
+    });
+    return;
+  }
+
+  const valid = verifyPaymentSignature(orderId, paymentId, signature, KEY_SECRET);
+
+  if (!valid) {
+    sendJson(res, 400, { ok: false, error: 'Invalid payment signature' });
+    return;
+  }
+
+  sendJson(res, 200, {
+    ok: true,
+    orderId,
+    paymentId,
+  });
+}
+
 async function serveStatic(pathname, res) {
   const safePath = pathname === '/' ? '/index.html' : pathname;
   const resolved = path.resolve(FRONTEND_ROOT, '.' + safePath);
@@ -180,6 +227,11 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'POST' && pathname === '/api/payments/verify') {
+    await handleVerifyPayment(req, res);
+    return;
+  }
+
   if (req.method === 'GET') {
     await serveStatic(pathname, res);
     return;
@@ -192,6 +244,15 @@ server.listen(PORT, () => {
   console.log(`GlowMe dev server → http://localhost:${PORT}`);
   console.log(`Health check    → http://localhost:${PORT}/api/health`);
   if (!razorpayConfigured()) {
-    console.warn('⚠ Razorpay keys missing or still placeholders — POST /api/orders will return 503');
+    console.warn('⚠ Razorpay keys missing or still placeholders — payment API routes will return 503');
   }
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Stop the other process or set PORT in backend/.env`);
+  } else {
+    console.error(err);
+  }
+  process.exit(1);
 });
