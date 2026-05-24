@@ -102,7 +102,7 @@ With `npm run dev` running and test keys in `backend/.env`:
 
 1. Open http://localhost:3000
 2. Click **Calendar** on any artist → select service, date, time
-3. Click **Confirm and pay 30% deposit**
+3. Click **Confirm and pay 50% deposit**
 4. Razorpay test checkout opens (use test card from [Razorpay docs](https://razorpay.com/docs/payments/payments/test-card-upi-details/))
 5. After pay: server verifies signature → success toast → WhatsApp opens
 
