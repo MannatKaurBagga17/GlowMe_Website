@@ -1,0 +1,13 @@
+{
+  "name": "glowme-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env server.js",
+    "dev": "node --env-file=.env --watch server.js"
+  },
+  "dependencies": {
+    "razorpay": "^2.9.6"
+  }
+}
