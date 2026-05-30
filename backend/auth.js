@@ -169,3 +169,17 @@ export function handleLogout(req, res) {
   });
   res.end(JSON.stringify({ ok: true }));
 }
+
+/**
+ * Guard for protected routes. Returns the signed-in artist, or sends a 401 and
+ * returns null. Usage: `const artist = requireAuth(req, res); if (!artist) return;`
+ */
+export function requireAuth(req, res) {
+  const session = readSessionFromRequest(req);
+  const artist = session ? getArtistById(session.artistId) : null;
+  if (!artist) {
+    sendJson(res, 401, { error: 'Not signed in' });
+    return null;
+  }
+  return artist;
+}

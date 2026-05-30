@@ -29,6 +29,9 @@ nav.scrolled{background:rgba(8,8,8,0.97);border-bottom:0.5px solid rgba(201,169,
 .nav-auth-name{font-size:12px;letter-spacing:0.08em;color:var(--cream);}
 .nav-auth-logout{background:none;border:none;color:var(--muted);font-family:var(--body);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:color 0.3s;padding:4px;}
 .nav-auth-logout:hover{color:var(--gold);}
+.nav-auth-manage{background:none;border:0.5px solid rgba(201,169,110,0.4);color:var(--gold);font-family:var(--body);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;padding:6px 14px;transition:all 0.3s;}
+.nav-auth-manage:hover{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.ml-error{color:#e7a3a3;font-size:12px;min-height:16px;margin:2px 0 6px;letter-spacing:0.02em;}
 .hero{height:100vh;position:relative;display:flex;align-items:flex-end;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=1800&q=80&fit=crop') center/cover no-repeat;transform:scale(1.05);transition:transform 8s ease;}
 .hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,1) 0%,rgba(8,8,8,0.55) 50%,rgba(8,8,8,0.2) 100%);}
@@ -84,6 +87,17 @@ nav.scrolled{background:rgba(8,8,8,0.97);border-bottom:0.5px solid rgba(201,169,
 .view-all:hover{gap:16px;}
 .artists-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
 .artist-card{position:relative;cursor:pointer;background:var(--dark);}
+.listings-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:48px 20px;font-size:14px;letter-spacing:0.04em;}
+.loc-filter{background:var(--off-black);padding:56px 60px 0;}
+.loc-filter-inner{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border:0.5px solid rgba(201,169,110,0.18);background:rgba(8,8,8,0.4);padding:16px 22px;}
+.loc-filter-label{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
+.loc-pills{display:flex;gap:8px;flex-wrap:wrap;flex:1;}
+.loc-pill{border:0.5px solid rgba(201,169,110,0.4);background:none;color:rgba(245,240,232,0.7);padding:8px 18px;font-family:var(--body);font-size:11px;letter-spacing:0.1em;cursor:pointer;transition:all 0.3s;}
+.loc-pill:hover{color:var(--gold);border-color:var(--gold);}
+.loc-pill.active{background:var(--gold);color:var(--black);border-color:var(--gold);}
+.loc-detect{display:inline-flex;align-items:center;gap:6px;border:0.5px solid var(--gold);background:none;color:var(--gold);padding:8px 18px;font-family:var(--body);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;white-space:nowrap;}
+.loc-detect:hover{background:var(--gold);color:var(--black);}
+.loc-detect:disabled{opacity:0.55;cursor:default;}
 .artist-img{height:360px;position:relative;overflow:hidden;}
 .artist-img img{width:100%;height:100%;object-fit:cover;filter:brightness(0.85) sepia(0.1);transition:transform 0.7s cubic-bezier(.25,.46,.45,.94),filter 0.4s;}
 .artist-card:hover .artist-img img{transform:scale(1.05);filter:brightness(0.75) sepia(0.2);}
@@ -355,12 +369,19 @@ footer{background:#050505;padding:60px 60px 36px;border-top:0.5px solid rgba(201
     <div class="service-card reveal d6"><img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80&fit=crop" alt="Editorial makeup" loading="lazy"><div class="service-overlay"><div class="service-num">06</div><div class="service-arrow">↗</div><div class="service-name">Editorial</div><div class="service-count">56 artists available</div></div></div>
   </div>
 </section>
+<div class="loc-filter">
+  <div class="loc-filter-inner">
+    <span class="loc-filter-label">📍 Your city</span>
+    <div class="loc-pills" id="locPills"></div>
+    <button class="loc-detect" id="locDetectBtn" onclick="glowmeDetectCity()">Detect me</button>
+  </div>
+</div>
 <section class="section artists-section" id="artists">
   <div class="artists-header">
     <div><div class="sec-label reveal">Top rated</div><h2 class="sec-title reveal">Featured <em>artists</em></h2></div>
     <a href="#" class="view-all reveal">View all 340+ →</a>
   </div>
-  <div class="artists-grid">
+  <div class="artists-grid" id="artistsGrid">
     <div class="artist-card reveal d1">
       <div class="artist-img"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80&fit=crop&crop=face" alt="Priya Mehta" loading="lazy"><div class="artist-avail">Available today</div><button class="artist-save" onclick="toggleSave(this)">♡</button></div>
       <div class="artist-info"><div class="artist-name-row"><span class="artist-name">Priya Mehta</span><div class="artist-rate">₹3,500<span>starting from</span></div></div><div class="artist-loc">📍 Chandigarh, Sector 17</div><div class="artist-tags"><span class="atag">Bridal</span><span class="atag">Airbrush</span><span class="atag">HD</span></div><div class="artist-footer"><div><span class="stars">★★★★★</span><span class="rating-txt">4.9 (128)</span></div><div style="display:flex;gap:8px"><button class="book-btn" style="font-size:9px;padding:7px 12px" onclick="openCal('Priya Mehta','Bridal')">📅 Calendar</button><button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>
@@ -404,7 +425,7 @@ footer{background:#050505;padding:60px 60px 36px;border-top:0.5px solid rgba(201
 <section class="section salons-section" id="salons">
   <div class="sec-label reveal">Partner salons</div>
   <h2 class="sec-title reveal">The full <em>salon</em> experience.</h2>
-  <div class="salons-grid">
+  <div class="salons-grid" id="salonsGrid">
     <div class="salon-card reveal d1"><div class="salon-img"><img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&q=80&fit=crop" alt="Blush and Co salon" loading="lazy"></div><div class="salon-overlay"><div class="salon-type">Full service salon</div><div class="salon-name">Blush & Co. Studio</div><div class="salon-loc">📍 Chandigarh, Sector 22 · Open 9am–8pm</div><div class="salon-services-row"><span class="s-chip">Bridal ₹8,000+</span><span class="s-chip">Facial ₹800+</span><span class="s-chip">Nails ₹1,200+</span><span class="s-chip">Hair ₹600+</span></div><div class="salon-footer"><div class="salon-rating">★★★★★ 4.9 · 6 artists</div><button class="salon-book" onclick="openCal('Blush and Co.','Salon Service')">Book slot</button></div></div></div>
     <div class="salon-card reveal d2"><div class="salon-img"><img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=800&q=80&fit=crop" alt="Bridal Atelier" loading="lazy"></div><div class="salon-overlay"><div class="salon-type">Bridal specialist</div><div class="salon-name">The Bridal Atelier</div><div class="salon-loc">📍 Mohali, Phase 7 · Open 8am–9pm</div><div class="salon-services-row"><span class="s-chip">Bridal pkg ₹18,000+</span><span class="s-chip">Pre-bridal ₹2,500+</span><span class="s-chip">Airbrush ₹4,000+</span></div><div class="salon-footer"><div class="salon-rating">★★★★★ 4.8 · 4 artists</div><button class="salon-book" onclick="openCal('Bridal Atelier','Bridal Package')">Book slot</button></div></div></div>
     <div class="salon-card reveal d3"><div class="salon-img"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&q=80&fit=crop" alt="Gloss Nail Studio" loading="lazy"></div><div class="salon-overlay"><div class="salon-type">Nail and beauty</div><div class="salon-name">Gloss Nail Studio</div><div class="salon-loc">📍 Chandigarh, Sector 9 · Open 10am–8pm</div><div class="salon-services-row"><span class="s-chip">Acrylic ₹1,400+</span><span class="s-chip">Gel ₹1,200+</span><span class="s-chip">Nail art ₹80/nail</span></div><div class="salon-footer"><div class="salon-rating">★★★★☆ 4.7 · 3 artists</div><button class="salon-book" onclick="openCal('Gloss Nail Studio','Nail Service')">Book slot</button></div></div></div>
@@ -416,7 +437,7 @@ footer{background:#050505;padding:60px 60px 36px;border-top:0.5px solid rgba(201
     <div><div class="sec-label reveal" style="color:var(--blush)">Nail specialists</div><h2 class="sec-title reveal">Nail art and <em style="color:var(--blush)">extensions.</em></h2></div>
     <a href="#" class="view-all reveal" style="color:var(--blush)">All nail artists →</a>
   </div>
-  <div class="nails-scroll">
+  <div class="nails-scroll" id="nailsScroll">
     <div class="nail-card reveal d1"><div class="nail-img"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&fit=crop" alt="Ritika Bose" loading="lazy"><div class="nail-spec">Extension specialist</div></div><div class="nail-info"><div class="nail-name">Ritika Bose</div><div class="nail-sub">📍 Chandigarh, Sector 26 · Home service</div><div class="nail-price-list"><div class="npl-row"><span class="npl-name">Acrylic extensions</span><span class="npl-price">₹1,200</span></div><div class="npl-row"><span class="npl-name">Gel extensions</span><span class="npl-price">₹1,000</span></div><div class="npl-row"><span class="npl-name">Ombre extensions</span><span class="npl-price">₹1,800</span></div><div class="npl-row"><span class="npl-name">Nail art per nail</span><span class="npl-price">₹80</span></div></div><div class="nail-footer"><div><span class="stars" style="color:var(--blush)">★★★★★</span><span class="rating-txt">4.9 (76)</span></div><button class="nail-book-btn" onclick="openCal('Ritika Bose','Nail Extensions')">Book</button></div></div></div>
     <div class="nail-card reveal d2"><div class="nail-img"><img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=600&q=80&fit=crop" alt="Deepa Verma" loading="lazy"><div class="nail-spec">3D nail art</div></div><div class="nail-info"><div class="nail-name">Deepa Verma</div><div class="nail-sub">📍 Mohali, Phase 9 · Salon visit only</div><div class="nail-price-list"><div class="npl-row"><span class="npl-name">3D nail art</span><span class="npl-price">₹150/nail</span></div><div class="npl-row"><span class="npl-name">Gel polish full set</span><span class="npl-price">₹600</span></div><div class="npl-row"><span class="npl-name">Bridal nail package</span><span class="npl-price">₹2,500</span></div><div class="npl-row"><span class="npl-name">Stamping and foils</span><span class="npl-price">₹900</span></div></div><div class="nail-footer"><div><span class="stars" style="color:var(--blush)">★★★★★</span><span class="rating-txt">4.8 (54)</span></div><button class="nail-book-btn" onclick="openCal('Deepa Verma','Nail Art')">Book</button></div></div></div>
     <div class="nail-card reveal d3"><div class="nail-img"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&fit=crop&crop=bottom" alt="Sunita Malik" loading="lazy"><div class="nail-spec">Extensions and repair</div></div><div class="nail-info"><div class="nail-name">Sunita Malik</div><div class="nail-sub">📍 Panchkula, Sector 8 · Home service</div><div class="nail-price-list"><div class="npl-row"><span class="npl-name">Soft gel extensions</span><span class="npl-price">₹1,000</span></div><div class="npl-row"><span class="npl-name">Refill</span><span class="npl-price">₹500</span></div><div class="npl-row"><span class="npl-name">Chrome nails</span><span class="npl-price">₹1,200</span></div><div class="npl-row"><span class="npl-name">Nail removal</span><span class="npl-price">₹200</span></div></div><div class="nail-footer"><div><span class="stars" style="color:var(--blush)">★★★★☆</span><span class="rating-txt">4.7 (41)</span></div><button class="nail-book-btn" onclick="openCal('Sunita Malik','Nail Extensions')">Book</button></div></div></div>
@@ -991,6 +1012,31 @@ function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,
 .lar-book:hover{background:var(--gold-light);}
 </style>
 
+<div class="ai-modal-overlay" id="modal-mylisting" onclick="closeAI('mylisting',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">My GlowMe listing</div><div class="ai-msub">✦ How customers find and book you</div></div>
+      <button class="ai-mclose" onclick="closeAI('mylisting')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">Display name</span>
+      <input class="ai-input" id="ml-name" maxlength="60" placeholder="e.g. Priya Mehta">
+      <span class="ai-label">City</span>
+      <input class="ai-input" id="ml-city" maxlength="40" placeholder="e.g. Chandigarh" list="ml-city-options" autocomplete="off">
+      <datalist id="ml-city-options"></datalist>
+      <span class="ai-label">Area (optional)</span>
+      <input class="ai-input" id="ml-area" maxlength="40" placeholder="e.g. Sector 17">
+      <span class="ai-label">Starting price (₹)</span>
+      <input class="ai-input" type="number" id="ml-price" min="100" max="1000000" placeholder="e.g. 3500">
+      <span class="ai-label">Specialities (comma-separated, up to 5)</span>
+      <input class="ai-input" id="ml-tags" maxlength="120" placeholder="e.g. Bridal, Airbrush, HD">
+      <span class="ai-label">Photo URL (optional)</span>
+      <input class="ai-input" id="ml-image" maxlength="500" placeholder="https://...">
+      <div class="ml-error" id="ml-error"></div>
+      <button class="ai-btn" id="ml-save-btn" onclick="saveMyListing()">Save my listing →</button>
+    </div>
+  </div>
+</div>
 <div class="ai-modal-overlay" id="modal-look" onclick="closeAI('look',event)">
   <div class="ai-modal">
     <div class="ai-mhead">
@@ -1813,6 +1859,7 @@ const _origSendMsg=sendMsg;
 <script>
 /* ── Artist auth (Google sign-in) ── */
 function glowmeRenderUser(a){
+  glowmeCurrentArtist=a;
   const wrap=document.createElement('span');
   wrap.className='nav-auth-user';
   if(a.picture){
@@ -1823,6 +1870,9 @@ function glowmeRenderUser(a){
   const name=document.createElement('span');
   name.className='nav-auth-name';name.textContent=(a.name||'Artist').split(' ')[0];
   wrap.appendChild(name);
+  const manage=document.createElement('button');
+  manage.className='nav-auth-manage';manage.textContent='My listing';manage.addEventListener('click',openMyListing);
+  wrap.appendChild(manage);
   const btn=document.createElement('button');
   btn.className='nav-auth-logout';btn.textContent='Logout';btn.addEventListener('click',glowmeLogout);
   wrap.appendChild(btn);
@@ -1864,6 +1914,231 @@ async function glowmeLogout(){
   }
 })();
 document.addEventListener('DOMContentLoaded',glowmeInitAuth);
+
+/* ── Listings (data-driven catalog from /api/listings) ── */
+/* Note: this seed data is OUR own (trusted), so template-string innerHTML is
+   fine here. When artists self-onboard (untrusted input), we'll switch to
+   escaped/DOM-built rendering — same trust-boundary rule as the login chip. */
+function glowmeStars(rating){
+  // Reproduces the original hand-authored stars (4.7 → 4★, ≥4.8 → 5★).
+  const full=Math.floor(rating+0.25);
+  return '★'.repeat(full)+'☆'.repeat(Math.max(0,5-full));
+}
+/* Escape for HTML text AND double/single-quoted attribute contexts. Named
+   glowmeEsc to avoid colliding with the chat widget's text-only esc(). */
+function glowmeEsc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function glowmeLoc(l){return l.area?glowmeEsc(l.city)+', '+glowmeEsc(l.area):glowmeEsc(l.city);}
+function glowmeRatingHTML(l,starColor){
+  if(l.rating==null)return '<span class="rating-txt">New</span>'; // artist-created, no reviews yet
+  const st=starColor?' style="color:'+starColor+'"':'';
+  return '<span class="stars"'+st+'>'+glowmeStars(l.rating)+'</span><span class="rating-txt">'+l.rating.toFixed(1)+' ('+(l.reviews??0)+')</span>';
+}
+
+function artistCardHTML(a){
+  const name=glowmeEsc(a.name);
+  const tags=(a.details.tags||[]).map(t=>'<span class="atag">'+glowmeEsc(t)+'</span>').join('');
+  const avail=a.available?'<div class="artist-avail">Available today</div>':'';
+  return '<div class="artist-card">'
+    +'<div class="artist-img"><img src="'+glowmeEsc(a.image)+'" alt="'+name+'" loading="lazy">'+avail
+    +'<button class="artist-save" onclick="toggleSave(this)">♡</button></div>'
+    +'<div class="artist-info"><div class="artist-name-row"><span class="artist-name">'+name+'</span>'
+    +'<div class="artist-rate">₹'+Number(a.priceFrom||0).toLocaleString('en-IN')+'<span>starting from</span></div></div>'
+    +'<div class="artist-loc">📍 '+glowmeLoc(a)+'</div>'
+    +'<div class="artist-tags">'+tags+'</div>'
+    +'<div class="artist-footer"><div>'+glowmeRatingHTML(a)+'</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="book-btn glowme-book" style="font-size:9px;padding:7px 12px" data-name="'+name+'" data-service="'+glowmeEsc(a.bookService)+'">📅 Calendar</button>'
+    +'<button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>';
+}
+
+function renderArtists(list){
+  const grid=document.getElementById('artistsGrid');
+  if(!grid)return;
+  grid.innerHTML=list.length
+    ? list.map(artistCardHTML).join('')
+    : '<p class="listings-empty">No artists in this city yet — check back soon.</p>';
+}
+
+function salonCardHTML(s){
+  const d=s.details||{};
+  const name=glowmeEsc(s.name);
+  const chips=(d.chips||[]).map(c=>'<span class="s-chip">'+glowmeEsc(c)+'</span>').join('');
+  const rating=s.rating!=null?glowmeStars(s.rating)+' '+s.rating.toFixed(1):'New';
+  return '<div class="salon-card">'
+    +'<div class="salon-img"><img src="'+glowmeEsc(s.image)+'" alt="'+name+'" loading="lazy"></div>'
+    +'<div class="salon-overlay"><div class="salon-type">'+glowmeEsc(d.type||'')+'</div>'
+    +'<div class="salon-name">'+name+'</div>'
+    +'<div class="salon-loc">📍 '+glowmeLoc(s)+(d.hours?' · '+glowmeEsc(d.hours):'')+'</div>'
+    +'<div class="salon-services-row">'+chips+'</div>'
+    +'<div class="salon-footer"><div class="salon-rating">'+rating+(d.artistsCount?' · '+glowmeEsc(d.artistsCount)+' artists':'')+'</div>'
+    +'<button class="salon-book glowme-book" data-name="'+name+'" data-service="'+glowmeEsc(s.bookService)+'">Book slot</button></div></div></div>';
+}
+
+function nailCardHTML(n){
+  const d=n.details||{};
+  const name=glowmeEsc(n.name);
+  const prices=(d.prices||[]).map(p=>'<div class="npl-row"><span class="npl-name">'+glowmeEsc(p.name)+'</span><span class="npl-price">'+glowmeEsc(p.price)+'</span></div>').join('');
+  return '<div class="nail-card">'
+    +'<div class="nail-img"><img src="'+glowmeEsc(n.image)+'" alt="'+name+'" loading="lazy"><div class="nail-spec">'+glowmeEsc(d.spec||'')+'</div></div>'
+    +'<div class="nail-info"><div class="nail-name">'+name+'</div>'
+    +'<div class="nail-sub">📍 '+glowmeLoc(n)+(d.serviceMode?' · '+glowmeEsc(d.serviceMode):'')+'</div>'
+    +'<div class="nail-price-list">'+prices+'</div>'
+    +'<div class="nail-footer"><div>'+glowmeRatingHTML(n,'var(--blush)')+'</div>'
+    +'<button class="nail-book-btn glowme-book" data-name="'+name+'" data-service="'+glowmeEsc(n.bookService)+'">Book</button></div></div></div>';
+}
+
+function renderSalons(list){
+  const grid=document.getElementById('salonsGrid');
+  if(!grid)return;
+  grid.innerHTML=list.length?list.map(salonCardHTML).join(''):'<p class="listings-empty">No salons in this city yet — check back soon.</p>';
+}
+
+function renderNails(list){
+  const grid=document.getElementById('nailsScroll');
+  if(!grid)return;
+  grid.innerHTML=list.length?list.map(nailCardHTML).join(''):'<p class="listings-empty">No nail specialists in this city yet — check back soon.</p>';
+}
+
+/* City centroids for "Detect me". Our catalog spans only these cities, so we
+   map the browser's GPS coords to the nearest one locally — no geocoding API. */
+const GLOWME_CITY_COORDS={
+  Chandigarh:[30.7333,76.7794],
+  Mohali:[30.7046,76.7179],
+  Panchkula:[30.6942,76.8606],
+  Delhi:[28.6139,77.2090],
+};
+let glowmeAllListings=[];
+let glowmeCities=[];
+let glowmeCity='all';
+let glowmeCurrentArtist=null;
+
+function listingsFor(kind){
+  return glowmeAllListings.filter(l=>l.kind===kind&&(glowmeCity==='all'||l.city===glowmeCity));
+}
+function glowmeRenderAll(){
+  renderArtists(listingsFor('artist'));
+  renderSalons(listingsFor('salon'));
+  renderNails(listingsFor('nail'));
+}
+function buildCityPills(){
+  const wrap=document.getElementById('locPills');
+  if(!wrap)return;
+  wrap.innerHTML=['all',...glowmeCities].map(c=>
+    '<button class="loc-pill'+(c===glowmeCity?' active':'')+'" data-city="'+c+'" onclick="glowmeApplyCity(\''+c+'\')">'+(c==='all'?'All cities':c)+'</button>'
+  ).join('');
+}
+function glowmeApplyCity(city){
+  glowmeCity=city;
+  try{localStorage.setItem('glowme_city',city);}catch{}
+  document.querySelectorAll('.loc-pill').forEach(p=>p.classList.toggle('active',p.dataset.city===city));
+  glowmeRenderAll();
+}
+/* Great-circle distance (km) between two lat/lng points. */
+function glowmeHaversine(lat1,lng1,lat2,lng2){
+  const R=6371,toRad=x=>x*Math.PI/180;
+  const dLat=toRad(lat2-lat1),dLng=toRad(lng2-lng1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function glowmeNearestCity(lat,lng){
+  let best=null,bestD=Infinity;
+  for(const city of glowmeCities){
+    const c=GLOWME_CITY_COORDS[city];
+    if(!c)continue;
+    const d=glowmeHaversine(lat,lng,c[0],c[1]);
+    if(d<bestD){bestD=d;best=city;}
+  }
+  return bestD<=150?best:null; // sanity threshold: 150km, else "no city near you"
+}
+function glowmeDetectCity(){
+  const btn=document.getElementById('locDetectBtn');
+  if(!navigator.geolocation){showToast('Location isn\'t supported on this browser.','error');return;}
+  if(btn){btn.disabled=true;btn.textContent='Detecting…';}
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      if(btn){btn.disabled=false;btn.textContent='Detect me';}
+      const nearest=glowmeNearestCity(pos.coords.latitude,pos.coords.longitude);
+      if(nearest){glowmeApplyCity(nearest);showToast('Showing results near '+nearest+'.');}
+      else{showToast('No GlowMe city near you yet — pick one manually.','error');}
+    },
+    err=>{
+      if(btn){btn.disabled=false;btn.textContent='Detect me';}
+      showToast(err.code===1?'Location permission denied — pick your city manually.':'Couldn\'t get your location.','error');
+    },
+    {timeout:8000,maximumAge:600000}
+  );
+}
+async function glowmeLoadListings(){
+  try{
+    const res=await fetch('/api/listings');
+    const data=await res.json();
+    glowmeAllListings=data.listings||[];
+    glowmeCities=data.cities||[];
+    let saved=null;try{saved=localStorage.getItem('glowme_city');}catch{}
+    glowmeCity=(saved==='all'||glowmeCities.includes(saved))?saved:'all';
+    buildCityPills();
+    glowmeRenderAll();
+  }catch(err){
+    // Leave the hardcoded fallback cards in place if the API is unreachable.
+    console.warn('Listings load failed; keeping static fallback.',err);
+  }
+}
+/* ── Artist: create/edit my listing ── */
+function glowmeSetVal(id,v){const el=document.getElementById(id);if(el)el.value=(v==null?'':v);}
+async function openMyListing(){
+  const dl=document.getElementById('ml-city-options');
+  if(dl)dl.innerHTML=(glowmeCities||[]).map(c=>'<option value="'+glowmeEsc(c)+'"></option>').join('');
+  const err=document.getElementById('ml-error');if(err)err.textContent='';
+  openAI('mylisting');
+  try{
+    const res=await fetch('/api/my/listing');
+    if(res.status===401){closeAI('mylisting');showToast('Please sign in first.','error');return;}
+    const l=(await res.json()).listing;
+    glowmeSetVal('ml-name', l?l.name:((glowmeCurrentArtist&&glowmeCurrentArtist.name)||''));
+    glowmeSetVal('ml-city', l?l.city:'');
+    glowmeSetVal('ml-area', l&&l.area?l.area:'');
+    glowmeSetVal('ml-price', l&&l.priceFrom?l.priceFrom:'');
+    glowmeSetVal('ml-tags', l&&l.details&&l.details.tags?l.details.tags.join(', '):'');
+    glowmeSetVal('ml-image', l&&l.image?l.image:'');
+  }catch{}
+}
+async function saveMyListing(){
+  const btn=document.getElementById('ml-save-btn');
+  const err=document.getElementById('ml-error');if(err)err.textContent='';
+  const payload={
+    name:document.getElementById('ml-name').value,
+    city:document.getElementById('ml-city').value,
+    area:document.getElementById('ml-area').value,
+    priceFrom:Number(document.getElementById('ml-price').value),
+    tags:document.getElementById('ml-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    image:document.getElementById('ml-image').value,
+  };
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{
+    const res=await fetch('/api/my/listing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json();
+    if(!res.ok){if(err)err.textContent=data.error||'Could not save.';return;}
+    showToast('Your listing is live!');
+    closeAI('mylisting');
+    await glowmeLoadListings();
+    glowmeApplyCity('all'); // show everything so the artist sees their new card
+    const sec=document.getElementById('artists');if(sec)sec.scrollIntoView({behavior:'smooth'});
+  }catch{
+    if(err)err.textContent='Network error — please try again.';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Save my listing →';}
+  }
+}
+
+/* Delegated booking: rendered cards carry data-name/data-service instead of an
+   inline onclick, so no user data is ever interpolated into executable JS. */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.glowme-book');
+  if(b)openCal(b.dataset.name,b.dataset.service);
+});
+document.addEventListener('DOMContentLoaded',glowmeLoadListings);
 </script>
 </body>
 </html>
