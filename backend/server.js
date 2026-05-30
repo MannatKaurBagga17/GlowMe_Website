@@ -19,7 +19,8 @@ import {
   handleMe,
   handleLogout,
 } from './auth.js';
-import db from './db.js';
+import db, { getListings, getListingCities } from './db.js';
+import { handleGetMyListing, handleSaveMyListing } from './myListing.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_ROOT = path.resolve(__dirname, '..', 'frontend');
@@ -197,6 +198,27 @@ async function handleVerifyPayment(req, res) {
   });
 }
 
+const LISTING_KINDS = ['artist', 'salon', 'nail'];
+
+function handleGetListings(req, res, url) {
+  const city = url.searchParams.get('city') || undefined;
+  const kind = url.searchParams.get('kind') || undefined;
+
+  if (kind && !LISTING_KINDS.includes(kind)) {
+    sendJson(res, 400, { error: `Invalid kind. Use one of: ${LISTING_KINDS.join(', ')}` });
+    return;
+  }
+
+  try {
+    // `cities` is always the full set (so the picker is stable regardless of
+    // the current filter); `listings` is the filtered result.
+    sendJson(res, 200, { cities: getListingCities(), listings: getListings({ city, kind }) });
+  } catch (err) {
+    console.error('GET /api/listings failed:', err.message);
+    sendJson(res, 500, { error: 'Failed to load listings' });
+  }
+}
+
 async function serveStatic(pathname, res) {
   const safePath = pathname === '/' ? '/index.html' : pathname;
   const resolved = path.resolve(FRONTEND_ROOT, '.' + safePath);
@@ -230,6 +252,11 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'GET' && pathname === '/api/listings') {
+    handleGetListings(req, res, url);
+    return;
+  }
+
   if (req.method === 'POST' && pathname === '/api/orders') {
     await handleCreateOrder(req, res);
     return;
@@ -257,6 +284,16 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'POST' && pathname === '/api/auth/logout') {
     handleLogout(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && pathname === '/api/my/listing') {
+    handleGetMyListing(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && pathname === '/api/my/listing') {
+    await handleSaveMyListing(req, res);
     return;
   }
 
@@ -290,11 +327,12 @@ server.on('error', (err) => {
 
 // Graceful shutdown: stop accepting connections, close the SQLite handle, then
 // exit. Now that we hold a DB handle, this lets Node tear down cleanly on Ctrl+C.
+// Dev server: on Ctrl+C, release the SQLite handle and exit. We don't bother
+// draining in-flight requests (unnecessary in development), which keeps this
+// simple and avoids hanging on keep-alive sockets.
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.on(signal, () => {
-    server.close(() => {
-      db.close();
-      process.exit(0);
-    });
+    db.close();
+    process.exit(0);
   });
 }
