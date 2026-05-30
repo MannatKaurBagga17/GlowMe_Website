@@ -12,6 +12,14 @@ import { fileURLToPath } from 'url';
 import Razorpay from 'razorpay';
 import { computeBookingDeposit } from './pricing.js';
 import { verifyPaymentSignature } from './verifyPayment.js';
+import {
+  googleConfigured,
+  handleGoogleStart,
+  handleGoogleCallback,
+  handleMe,
+  handleLogout,
+} from './auth.js';
+import db from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRONTEND_ROOT = path.resolve(__dirname, '..', 'frontend');
@@ -232,6 +240,26 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'GET' && pathname === '/api/auth/google') {
+    handleGoogleStart(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && pathname === '/api/auth/google/callback') {
+    await handleGoogleCallback(req, res, url);
+    return;
+  }
+
+  if (req.method === 'GET' && pathname === '/api/auth/me') {
+    handleMe(req, res);
+    return;
+  }
+
+  if (req.method === 'POST' && pathname === '/api/auth/logout') {
+    handleLogout(req, res);
+    return;
+  }
+
   if (req.method === 'GET') {
     await serveStatic(pathname, res);
     return;
@@ -246,6 +274,9 @@ server.listen(PORT, () => {
   if (!razorpayConfigured()) {
     console.warn('⚠ Razorpay keys missing or still placeholders — payment API routes will return 503');
   }
+  if (!googleConfigured()) {
+    console.warn('⚠ Google OAuth not configured — sign-in routes will return 503');
+  }
 });
 
 server.on('error', (err) => {
@@ -256,3 +287,14 @@ server.on('error', (err) => {
   }
   process.exit(1);
 });
+
+// Graceful shutdown: stop accepting connections, close the SQLite handle, then
+// exit. Now that we hold a DB handle, this lets Node tear down cleanly on Ctrl+C.
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => {
+    server.close(() => {
+      db.close();
+      process.exit(0);
+    });
+  });
+}
