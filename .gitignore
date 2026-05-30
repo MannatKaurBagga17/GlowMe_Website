@@ -3,3 +3,9 @@ backend/.env
 .env
 .DS_Store
 *.log
+
+# Local SQLite database — contains real user data (PII). Never commit.
+backend/*.db
+backend/*.db-journal
+backend/*.db-wal
+backend/*.db-shm
