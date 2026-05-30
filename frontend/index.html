@@ -20,6 +20,15 @@ nav.scrolled{background:rgba(8,8,8,0.97);border-bottom:0.5px solid rgba(201,169,
 .nav-links a:hover{color:var(--gold);}
 .nav-book{border:0.5px solid var(--gold);color:var(--gold);padding:10px 28px;font-family:var(--body);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;transition:all 0.3s;background:none;cursor:pointer;}
 .nav-book:hover{background:var(--gold);color:var(--black);}
+.nav-right{display:flex;align-items:center;gap:20px;}
+.nav-auth{display:flex;align-items:center;}
+.nav-auth-login{display:inline-flex;align-items:center;gap:8px;border:0.5px solid var(--gold);color:var(--gold);background:none;padding:10px 20px;font-family:var(--body);font-size:11px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all 0.3s;}
+.nav-auth-login:hover{background:var(--gold);color:var(--black);}
+.nav-auth-user{display:flex;align-items:center;gap:10px;}
+.nav-auth-avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;border:1px solid rgba(201,169,110,0.4);}
+.nav-auth-name{font-size:12px;letter-spacing:0.08em;color:var(--cream);}
+.nav-auth-logout{background:none;border:none;color:var(--muted);font-family:var(--body);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:color 0.3s;padding:4px;}
+.nav-auth-logout:hover{color:var(--gold);}
 .hero{height:100vh;position:relative;display:flex;align-items:flex-end;overflow:hidden;}
 .hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=1800&q=80&fit=crop') center/cover no-repeat;transform:scale(1.05);transition:transform 8s ease;}
 .hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,1) 0%,rgba(8,8,8,0.55) 50%,rgba(8,8,8,0.2) 100%);}
@@ -293,7 +302,10 @@ footer{background:#050505;padding:60px 60px 36px;border-top:0.5px solid rgba(201
     <li><a href="#how">How it works</a></li>
     <li><a href="#join">For artists</a></li>
   </ul>
-  <a href="#artists" class="nav-book">Book now</a>
+  <div class="nav-right">
+    <span id="navAuth" class="nav-auth"></span>
+    <a href="#artists" class="nav-book">Book now</a>
+  </div>
 </nav>
 <section class="hero">
   <div class="hero-bg"></div>
@@ -1799,7 +1811,59 @@ const _origSendMsg=sendMsg;
 </script>
 
 <script>
-
+/* ── Artist auth (Google sign-in) ── */
+function glowmeRenderUser(a){
+  const wrap=document.createElement('span');
+  wrap.className='nav-auth-user';
+  if(a.picture){
+    const img=document.createElement('img');
+    img.className='nav-auth-avatar';img.src=a.picture;img.alt='';img.referrerPolicy='no-referrer';
+    wrap.appendChild(img);
+  }
+  const name=document.createElement('span');
+  name.className='nav-auth-name';name.textContent=(a.name||'Artist').split(' ')[0];
+  wrap.appendChild(name);
+  const btn=document.createElement('button');
+  btn.className='nav-auth-logout';btn.textContent='Logout';btn.addEventListener('click',glowmeLogout);
+  wrap.appendChild(btn);
+  return wrap;
+}
+function glowmeRenderLogin(mount){
+  mount.innerHTML='<a class="nav-auth-login" href="/api/auth/google">Artist Login</a>';
+}
+async function glowmeInitAuth(){
+  const mount=document.getElementById('navAuth');
+  if(!mount)return;
+  try{
+    const res=await fetch('/api/auth/me',{headers:{'Accept':'application/json'}});
+    const data=await res.json();
+    mount.innerHTML='';
+    if(data.artist)mount.appendChild(glowmeRenderUser(data.artist));
+    else glowmeRenderLogin(mount);
+  }catch{
+    glowmeRenderLogin(mount);
+  }
+}
+async function glowmeLogout(){
+  try{await fetch('/api/auth/logout',{method:'POST'});}catch{}
+  if(typeof showToast==='function')showToast('Logged out.');
+  glowmeInitAuth();
+}
+(function(){
+  // One-time toast after the OAuth redirect, then strip ?auth from the URL.
+  const params=new URLSearchParams(window.location.search);
+  const auth=params.get('auth');
+  if(auth&&typeof showToast==='function'){
+    if(auth==='success')showToast('Signed in with Google. Welcome!');
+    else if(auth==='error')showToast('Sign-in failed. Please try again.','error');
+  }
+  if(auth){
+    params.delete('auth');
+    const qs=params.toString();
+    history.replaceState({},'',window.location.pathname+(qs?'?'+qs:'')+window.location.hash);
+  }
+})();
+document.addEventListener('DOMContentLoaded',glowmeInitAuth);
 </script>
 </body>
 </html>
