@@ -1,19 +1,13 @@
-// GlowMe — Main JavaScript
-// glowme.in — Built by Mannat Kaur
 
-/* ═══════════════════════════════════════════════════════════
-   GLOWME CONFIG — Yahan se sab kuch set karo
-   ═══════════════════════════════════════════════════════════
-   Owner WhatsApp: 91 + 10-digit number (no + sign, no spaces)
-   Razorpay keys: backend/.env only (Key ID returned from POST /api/orders)
-   ═══════════════════════════════════════════════════════════ */
-const CONFIG = {
-  ANTHROPIC_KEY:      '',                           // ← Claude API key (needs backend proxy for production)
-  OWNER_WHATSAPP:     '919877998375',               // ← Aapka number: 91 + 10 digits
-  ARTIST_LISTING_FEE: 999,                          // ← Artist ko kitna charge karna hai (₹)
-};
-window.GLOWME_API_KEY = CONFIG.ANTHROPIC_KEY;
-
+const CONFIG={OWNER_WHATSAPP:'919876543210'};
+function showToast(msg,type){
+  type=type||'success';
+  var t=document.createElement('div');
+  t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1A1714;border:1px solid '+(type==='error'?'#c85050':'#C9A96E')+';color:'+(type==='error'?'#ffaaaa':'#F5F0E8')+';padding:12px 24px;font-size:13px;z-index:99999;font-family:Jost,sans-serif;box-shadow:0 8px 32px rgba(0,0,0,0.4)';
+  document.body.appendChild(t);
+  setTimeout(function(){t.remove();},3500);
+}
 window.addEventListener('scroll',()=>{
   document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>80);
   const pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
@@ -23,7 +17,7 @@ const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.ta
 document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.observe(el));
 const countObs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting&&!el.target.dataset.counted){el.target.dataset.counted='1';const target=parseInt(el.target.dataset.target);let start=0,dur=1400,startTime=null;const step=ts=>{if(!startTime)startTime=ts;const prog=Math.min((ts-startTime)/dur,1);const ease=1-Math.pow(1-prog,3);el.target.textContent=Math.floor(target*ease);if(prog<1)requestAnimationFrame(step);else el.target.textContent=target;};requestAnimationFrame(step);}});},{threshold:0.5});
 document.querySelectorAll('.stat-num[data-target]').forEach(el=>countObs.observe(el));
-function toggleSave(btn){const saved=btn.innerHTML.trim()==='♥';btn.innerHTML=saved?'♡':'♥';btn.style.background=saved?'rgba(8,8,8,0.6)':'var(--gold)';btn.style.color=saved?'var(--gold)':'var(--black)';}
+function toggleSave(btn){btn.textContent=btn.textContent==='x'?'x':'x';btn.textContent=btn.innerHTML==='♡'?'♥':'♡';btn.style.background=btn.textContent==='♥'?'var(--gold)':'rgba(8,8,8,0.6)';btn.style.color=btn.textContent==='♥'?'var(--black)':'var(--gold)';}
 function bookIt(btn){btn.textContent='Booked';btn.style.background='var(--gold)';btn.style.color='var(--black)';setTimeout(()=>{btn.textContent='Book';btn.style.background='';btn.style.color='';},2000);}
 let curM=new Date().getMonth(),curY=new Date().getFullYear(),selDay=null,selTime=null,selSvc=null,curArtist='';
 const svcs={'Bridal':['Bridal makeup','Full bridal package','Bridal trial','Reception look'],'Party Makeup':['Party makeup','Evening glam','Festival look'],'Nail Extensions':['Acrylic extensions','Gel extensions','Ombre nails'],'Nail Art':['3D nail art','Gel polish','Bridal nail package'],'Salon Service':['Bridal makeup','Facial','Hair styling','Nail extensions'],'Bridal Package':['Full bridal package','Pre-bridal facial','Engagement look'],'Nail Service':['Acrylic extensions','Gel extensions','Nail art'],'Skincare':['Gold facial','Cleanup','De-tan','Body polishing'],'Natural Look':['Natural glow','Korean look','Dewy skin']};
@@ -38,52 +32,48 @@ function renderCal(){const months=['January','February','March','April','May','J
 function pickDay(d,st){selDay=d;selTime=null;renderCal();const months=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('selDateLbl').textContent=d+' '+months[curM]+' '+curY;const slots=getSlots(d);document.getElementById('timeSlots').innerHTML=slots.map(s=>'<div class="ts'+(s.taken?' taken':'')+'" '+(s.taken?'':'onclick="pickTime(this,\''+s.time+'\')"')+'>'+s.time+(s.taken?'<br>Booked':'')+'</div>').join('');document.getElementById('timeSection').style.display='block';updateSum();}
 function pickTime(el,t){document.querySelectorAll('.ts').forEach(s=>s.classList.remove('tsel'));el.classList.add('tsel');selTime=t;updateSum();}
 function updateSum(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];const s=document.getElementById('bookSum');if(!selSvc&&!selDay){s.innerHTML='Select a service and date to continue.';return;}const price=Math.max(2000,(selSvc||'').length*180);const dep=Math.round(price*0.5/100)*100;s.innerHTML='<strong>Artist</strong> '+curArtist+'<br><strong>Service</strong> '+(selSvc||'Not selected')+'<br><strong>Date</strong> '+(selDay?selDay+' '+months[curM]+' '+curY:'Not selected')+'<br><strong>Time</strong> '+(selTime||'Not selected')+'<br><strong>Total price</strong> Rs '+price.toLocaleString('en-IN')+'<br><strong>Deposit now 50%</strong> Rs '+dep.toLocaleString('en-IN');}
-async function confirmBook(){
+function confirmBook(){
   if(!selSvc||!selDay||!selTime){alert('Please select a service, date, and time slot.');return;}
   if(typeof Razorpay==='undefined'){showToast('Payment gateway load ho raha hai, ek second ruko...','error');return;}
   const btn=document.querySelector('.confirm-btn');
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const dateStr=`${selDay} ${months[curM]} ${curY}`;
+  const dateStr=selDay+' '+months[curM]+' '+curY;
   const origText=btn.textContent;
   btn.disabled=true;
   btn.textContent='Creating order...';
-  try{
-    const orderRes=await fetch('/api/orders',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({artist:curArtist,service:selSvc,date:dateStr,time:selTime}),
-    });
-    const orderData=await orderRes.json();
-    if(!orderRes.ok)throw new Error(orderData.error||'Could not create order');
+  fetch('/api/orders',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({artist:curArtist,service:selSvc,date:dateStr,time:selTime})
+  }).then(r=>r.json().then(d=>({ok:r.ok,data:d}))).then(({ok,data})=>{
+    if(!ok)throw new Error(data.error||'Could not create order');
     btn.textContent='Opening payment...';
-    const dep=orderData.depositInr;
+    const dep=data.depositInr;
     const rzp=new Razorpay({
-      key:orderData.keyId,
-      order_id:orderData.orderId,
-      amount:orderData.amount,
-      currency:orderData.currency,
+      key:data.keyId,
+      order_id:data.orderId,
+      amount:data.amount,
+      currency:data.currency,
       name:'GlowMe',
-      description:`${selSvc} · ${curArtist} · ${selDay} ${months[curM]}`,
-      handler:async function(response){
+      description:selSvc+' · '+curArtist+' · '+selDay+' '+months[curM],
+      handler:function(response){
         btn.textContent='Verifying payment...';
-        try{
-          const verifyRes=await fetch('/api/payments/verify',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-              razorpay_order_id:response.razorpay_order_id,
-              razorpay_payment_id:response.razorpay_payment_id,
-              razorpay_signature:response.razorpay_signature,
-            }),
-          });
-          const verifyData=await verifyRes.json();
-          if(!verifyRes.ok||!verifyData.ok)throw new Error(verifyData.error||'Payment verification failed');
+        fetch('/api/payments/verify',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            razorpay_order_id:response.razorpay_order_id,
+            razorpay_payment_id:response.razorpay_payment_id,
+            razorpay_signature:response.razorpay_signature
+          })
+        }).then(r=>r.json().then(d=>({ok:r.ok,data:d}))).then(({ok,data})=>{
+          if(!ok||!data.ok)throw new Error(data.error||'Payment verification failed');
           btn.textContent='✓ Payment received! Booking confirmed.';
           btn.style.background='#2D6A4F';
           btn.style.color='#fff';
-          const ownerMsg=`🌸 *New GlowMe Booking!*\n\n👤 Artist: ${curArtist}\n💄 Service: ${selSvc}\n📅 Date: ${dateStr}\n⏰ Time: ${selTime}\n💳 Deposit: ₹${dep.toLocaleString('en-IN')}\n🆔 Payment ID: ${response.razorpay_payment_id}`;
-          setTimeout(()=>{
-            window.open(`https://wa.me/${CONFIG.OWNER_WHATSAPP}?text=${encodeURIComponent(ownerMsg)}`,'_blank');
+          const ownerMsg='🌸 *New GlowMe Booking!*\n\n👤 Artist: '+curArtist+'\n💄 Service: '+selSvc+'\n📅 Date: '+dateStr+'\n⏰ Time: '+selTime+'\n💳 Deposit: ₹'+dep.toLocaleString('en-IN')+'\n🆔 Payment ID: '+response.razorpay_payment_id;
+          setTimeout(function(){
+            window.open('https://wa.me/'+CONFIG.OWNER_WHATSAPP+'?text='+encodeURIComponent(ownerMsg),'_blank');
             showToast('✓ Booking confirmed! WhatsApp confirmation check karo.');
             closeCal();
             btn.textContent=origText;
@@ -91,36 +81,36 @@ async function confirmBook(){
             btn.style.color='';
             btn.disabled=false;
           },1200);
-        }catch(err){
+        }).catch(function(err){
           showToast(err.message||'Verification failed','error');
           btn.textContent=origText;
           btn.disabled=false;
-        }
+        });
       },
       prefill:{name:'',email:'',contact:''},
       theme:{color:'#C9A96E'},
-      modal:{ondismiss:()=>{
+      modal:{ondismiss:function(){
         showToast('Payment cancel hua. Slot 10 min ke liye hold hai.','error');
         btn.textContent=origText;
         btn.disabled=false;
-      }},
+      }}
     });
-    rzp.on('payment.failed',()=>{
+    rzp.on('payment.failed',function(){
       showToast('Payment failed. Please try again.','error');
       btn.textContent=origText;
       btn.disabled=false;
     });
     rzp.open();
-  }catch(err){
+  }).catch(function(err){
     showToast(err.message||'Could not start payment','error');
     btn.textContent=origText;
     btn.disabled=false;
-  }
+  });
 }
 let chatOpen=false,chatHist=[],isSend=false;
 function toggleChat(){chatOpen=!chatOpen;document.getElementById('chat-window').classList.toggle('open',chatOpen);if(chatOpen&&chatHist.length===0){setTimeout(()=>addAI('Welcome to GlowMe. I am your personal beauty concierge here to help you find the perfect artist, check availability, or answer any questions. How may I assist you today?'),400);}if(chatOpen)setTimeout(()=>document.getElementById('chat-input').focus(),350);}
 function qa(t){document.getElementById('chat-input').value=t;sendMsg();}
-async function sendMsg(){if(isSend)return;const input=document.getElementById('chat-input');const text=input.value.trim();if(!text)return;input.value='';input.style.height='auto';addUser(text);const qr=document.getElementById('chatQR');if(qr)qr.style.display='none';isSend=true;document.getElementById('chat-send').disabled=true;chatHist.push({role:'user',content:text});const tid=showTyping();try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':CONFIG.ANTHROPIC_KEY,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:'You are the GlowMe AI concierge for Indias premium beauty marketplace. Be warm, elegant and concise. Help users find artists, book appointments, learn about services.',messages:chatHist})});removeTyping(tid);if(!res.ok)throw new Error();const data=await res.json();const reply=data.content?.[0]?.text||fallback(text);chatHist.push({role:'assistant',content:reply});addAI(reply);}catch{removeTyping(tid);const r=fallback(text);chatHist.push({role:'assistant',content:r});addAI(r);}isSend=false;document.getElementById('chat-send').disabled=false;}
+async function sendMsg(){if(isSend)return;const input=document.getElementById('chat-input');const text=input.value.trim();if(!text)return;input.value='';input.style.height='auto';addUser(text);const qr=document.getElementById('chatQR');if(qr)qr.style.display='none';isSend=true;document.getElementById('chat-send').disabled=true;chatHist.push({role:'user',content:text});const tid=showTyping();try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:'You are the GlowMe AI concierge for Indias premium beauty marketplace. Be warm, elegant and concise. Help users find artists, book appointments, learn about services.',messages:chatHist})});removeTyping(tid);if(!res.ok)throw new Error();const data=await res.json();const reply=data.content?.[0]?.text||fallback(text);chatHist.push({role:'assistant',content:reply});addAI(reply);}catch{removeTyping(tid);const r=fallback(text);chatHist.push({role:'assistant',content:r});addAI(r);}isSend=false;document.getElementById('chat-send').disabled=false;}
 function fallback(t){const l=t.toLowerCase();if(l.includes('bridal')||l.includes('wedding'))return'For bridal makeup, our finest artists include Priya Mehta from Rs 3,500 in Chandigarh and Anjali Sharma from Rs 5,000 in Delhi both rated 5 stars. Advance booking up to 12 months available. Shall I help you check their calendar?';if(l.includes('nail')||l.includes('extension'))return'Our nail specialists offer acrylic and gel extensions from Rs 1,000, 3D nail art, ombre nails, and full bridal nail packages. Ritika Bose and Deepa Verma are our top rated nail artists. Would you like to view their availability?';if(l.includes('salon'))return'We partner with four curated salons Blush and Co in Chandigarh, The Bridal Atelier in Mohali, Gloss Nail Studio in Chandigarh, and Radiance Beauty Bar in Panchkula. Each offers a complete range of services. Which area suits you?';if(l.includes('book')||l.includes('how'))return'Booking is effortless. Browse artists, check their live calendar, select your date and time, and pay a 30% deposit to confirm. Balance is collected after your appointment. Shall I guide you to an artist?';if(l.includes('price')||l.includes('cost'))return'Services start from Rs 2,200 for party makeup, Rs 3,500 for bridal, and Rs 1,000 for nail extensions. You pay just 30% to secure your booking with the balance due after. What service interests you?';if(l.includes('cancel'))return'We offer a full refund for cancellations 48 hours before your appointment, 50% for 24 to 48 hours prior, and no refund within 24 hours. One complimentary reschedule is available per booking.';return'Thank you for your enquiry. For personalised assistance our team is available at hello@glowme.in and responds within 2 hours. Is there a specific service or artist I can help you find?';}
 function addUser(t){const m=document.createElement('div');m.className='msg user';m.innerHTML='<div class="msg-bub">'+esc(t)+'</div><div class="msg-av u">U</div>';document.getElementById('chatMsgs').appendChild(m);scrollB();}
 function addAI(t){const m=document.createElement('div');m.className='msg ai';const f=t.replace(/\n/g,'<br>');m.innerHTML='<div class="msg-av ai">G</div><div class="msg-bub">'+f+'</div>';document.getElementById('chatMsgs').appendChild(m);scrollB();}
@@ -130,6 +120,8 @@ function scrollB(){const m=document.getElementById('chatMsgs');setTimeout(()=>{m
 function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ck(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
 function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,80)+'px';}
+
+
 
 /* LOOK RECOMMENDER - INDIA + WORLDWIDE */
 const INDIAN_LOOKS = [
@@ -310,8 +302,7 @@ function showLookResult(look,aiText){
   const stars=(aiText.match(/([1-5])\s*\/\s*5/)||[])[1];
   const r=stars?parseInt(stars):4;
   document.getElementById('look-result-sub').textContent='&#9733;'.repeat(r)+'&#9734;'.repeat(5-r)+' - '+(toneData[lookTone]?.name||'Your skin')+' - '+look.sub;
-  document.getElementById('look-why-text').innerHTML=aiText.replace(/
-/g,'<br>');
+  document.getElementById('look-why-text').innerHTML=aiText.replace(/\n/g,'<br>');
   document.getElementById('look-artist-recs').innerHTML=look.artists.map(a=>`<div class="lar"><div class="lar-name">${a.name}</div><div class="lar-detail">${a.loc} - ${a.spec}</div><div class="lar-price">${a.price}</div><button class="lar-book" onclick="openCal('${a.name}','Bridal')">Book this artist</button></div>`).join('');
   document.getElementById('look-ai-result').style.display='block';
 }
@@ -319,16 +310,10 @@ function showLookResult(look,aiText){
 function lookFallbackResult(look,tone,occ){
   const td=toneData[tone]||toneData.medium;
   const good=look.tones?.includes(tone)||look.tones?.includes('all');
-  return'MATCH SCORE: '+(good?'4':'3')+'/5 - '+(good?'This look complements your skin tone beautifully.':'With right adjustments this look can work for you.')+'
-
-WHY IT SUITS YOU: The '+td.name+' complexion has '+(tone==='fair'||tone==='light'?'delicate undertones this look enhances with soft pigments.':'warm rich undertones that make bold pigments truly pop.')+'
-
-HOW IT WILL LOOK: On '+td.name+' skin, this appears '+(tone==='fair'||tone==='light'?'luminous and refined.':'vibrant and rich, photographing beautifully.')+'
-
-BEST PRODUCT SHADES: Foundation - '+(tone==='fair'?'NC15-NC20':tone==='light'?'NC25-NC30':tone==='medium'?'NC35-NC40':tone==='tan'?'NC42-NC45':'NC50-NC55')+'. Lip - '+(tone==='fair'||tone==='light'?'Rose-pink or berry':'Terracotta or deep red')+'. Eyes - '+(tone==='deep'||tone==='rich'?'Bronze, copper, gold':'Champagne, taupe, brown')+'.
-
-PRO TIP: '+(tone==='fair'||tone==='light'?'Use colour-correcting primer so makeup lasts without oxidising.':'Apply golden highlighter on high points - catches light beautifully on your skin.');
+  return'MATCH SCORE: '+(good?'4':'3')+'/5 - '+(good?'This look complements your skin tone beautifully.':'With right adjustments this look can work for you.')+'\n\nWHY IT SUITS YOU: The '+td.name+' complexion has '+(tone==='fair'||tone==='light'?'delicate undertones this look enhances with soft pigments.':'warm rich undertones that make bold pigments truly pop.')+'\n\nHOW IT WILL LOOK: On '+td.name+' skin, this appears '+(tone==='fair'||tone==='light'?'luminous and refined.':'vibrant and rich, photographing beautifully.')+'\n\nBEST PRODUCT SHADES: Foundation - '+(tone==='fair'?'NC15-NC20':tone==='light'?'NC25-NC30':tone==='medium'?'NC35-NC40':tone==='tan'?'NC42-NC45':'NC50-NC55')+'. Lip - '+(tone==='fair'||tone==='light'?'Rose-pink or berry':'Terracotta or deep red')+'. Eyes - '+(tone==='deep'||tone==='rich'?'Bronze, copper, gold':'Champagne, taupe, brown')+'.\n\nPRO TIP: '+(tone==='fair'||tone==='light'?'Use colour-correcting primer so makeup lasts without oxidising.':'Apply golden highlighter on high points - catches light beautifully on your skin.');
 }
+
+
 
 /* ══════════════════════════════════════════════
    AI FEATURE JAVASCRIPT
@@ -357,7 +342,7 @@ function selChipMulti(btn){btn.classList.toggle('sel');}
 async function callAI(prompt){
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json','x-api-key':CONFIG.ANTHROPIC_KEY,'anthropic-version':'2023-06-01'},
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,
         system:'You are GlowMe AI — India\'s luxury beauty marketplace assistant. Give concise, direct, useful answers. Use line breaks for readability. Mention specific artist names from GlowMe when relevant: Priya Mehta (bridal/airbrush, Chandigarh, Rs 3500+), Simran Kaur (party/natural, Mohali, Rs 2800+), Anjali Sharma (bridal/editorial, Delhi, Rs 5000+), Neha Patel (party/airbrush, Panchkula, Rs 2200+), Ritika Bose (nail extensions, Chandigarh, Rs 1200+), Deepa Verma (nail art, Mohali, Rs 800+). Keep responses under 150 words.',
         messages:[{role:'user',content:prompt}]})
@@ -535,113 +520,364 @@ function runTrendAI(){
   document.getElementById('trend-result').style.display='block';
 }
 
-/* ═══════════════════════════════════════════════════════════
-   TOAST NOTIFICATION
-   ═══════════════════════════════════════════════════════════ */
-function showToast(msg,type='success'){
-  const t=document.createElement('div');
-  t.className='glowme-toast '+(type==='error'?'toast-error':'toast-success');
-  t.textContent=msg;
-  document.body.appendChild(t);
-  requestAnimationFrame(()=>{t.classList.add('show');});
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
-}
+// ── UPGRADE CHATBOT SYSTEM PROMPT ──
+// Override the chatbot system to include look matching intelligence
+const _origSendMsg=sendMsg;
 
-/* ═══════════════════════════════════════════════════════════
-   ARTIST APPLICATION MODAL
-   ═══════════════════════════════════════════════════════════ */
-function openArtistApply(){
-  // Reset modal to form step
-  document.getElementById('ap-step-form').style.display='block';
-  document.getElementById('ap-step-success').style.display='none';
-  // Update fee display from CONFIG (in case it was changed)
-  const fd=document.getElementById('ap-fee-display');
-  if(fd)fd.textContent='₹'+CONFIG.ARTIST_LISTING_FEE.toLocaleString('en-IN');
-  const pb=document.getElementById('ap-pay-btn');
-  if(pb)pb.textContent='Pay ₹'+CONFIG.ARTIST_LISTING_FEE.toLocaleString('en-IN')+' & Submit Application →';
-  document.getElementById('modal-artist-apply').classList.add('open');
-  document.body.style.overflow='hidden';
-}
 
-function closeArtistApply(e){
-  if(e&&e.target!==document.getElementById('modal-artist-apply'))return;
-  document.getElementById('modal-artist-apply').classList.remove('open');
-  document.body.style.overflow='';
-}
 
-function toggleApplySpec(btn){btn.classList.toggle('sel');}
-
-function payArtistFee(){
-  const name     =document.getElementById('ap-name').value.trim();
-  const phone    =document.getElementById('ap-phone').value.trim().replace(/\D/g,'');
-  const email    =document.getElementById('ap-email').value.trim();
-  const city     =document.getElementById('ap-city').value;
-  const category =document.getElementById('ap-category').value;
-  const portfolio=document.getElementById('ap-portfolio').value.trim();
-  const bio      =document.getElementById('ap-bio').value.trim();
-  const specs    =[...document.querySelectorAll('#ap-specs .sel')].map(s=>s.textContent).join(', ');
-  const exp      =document.querySelector('#ap-exp .sel')?.textContent||'Not specified';
-
-  if(!name||!phone||!email||!city||!category){
-    showToast('Sab required fields bharain (*).','error');return;
+/* ── Artist auth (Google sign-in) ── */
+function glowmeRenderUser(a){
+  glowmeCurrentArtist=a;
+  const wrap=document.createElement('span');
+  wrap.className='nav-auth-user';
+  if(a.picture){
+    const img=document.createElement('img');
+    img.className='nav-auth-avatar';img.src=a.picture;img.alt='';img.referrerPolicy='no-referrer';
+    wrap.appendChild(img);
   }
-  if(phone.length!==10){
-    showToast('Valid 10-digit WhatsApp number enter karo.','error');return;
+  const name=document.createElement('span');
+  name.className='nav-auth-name';name.textContent=(a.name||'Artist').split(' ')[0];
+  wrap.appendChild(name);
+  const manage=document.createElement('button');
+  manage.className='nav-auth-manage';manage.textContent='My listing';manage.addEventListener('click',openMyListing);
+  wrap.appendChild(manage);
+  const btn=document.createElement('button');
+  btn.className='nav-auth-logout';btn.textContent='Logout';btn.addEventListener('click',glowmeLogout);
+  wrap.appendChild(btn);
+  return wrap;
+}
+function glowmeRenderLogin(mount){
+  mount.innerHTML='<a class="nav-auth-login" href="/api/auth/google">Artist Login</a>';
+}
+async function glowmeInitAuth(){
+  const mount=document.getElementById('navAuth');
+  if(!mount)return;
+  try{
+    const res=await fetch('/api/auth/me',{headers:{'Accept':'application/json'}});
+    const data=await res.json();
+    mount.innerHTML='';
+    if(data.artist)mount.appendChild(glowmeRenderUser(data.artist));
+    else glowmeRenderLogin(mount);
+  }catch{
+    glowmeRenderLogin(mount);
   }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    showToast('Valid email address enter karo.','error');return;
+}
+async function glowmeLogout(){
+  try{await fetch('/api/auth/logout',{method:'POST'});}catch{}
+  if(typeof showToast==='function')showToast('Logged out.');
+  glowmeInitAuth();
+}
+(function(){
+  // One-time toast after the OAuth redirect, then strip ?auth from the URL.
+  const params=new URLSearchParams(window.location.search);
+  const auth=params.get('auth');
+  if(auth&&typeof showToast==='function'){
+    if(auth==='success')showToast('Signed in with Google. Welcome!');
+    else if(auth==='error')showToast('Sign-in failed. Please try again.','error');
   }
-  if(typeof Razorpay==='undefined'){
-    showToast('Payment gateway load ho raha hai, try again.','error');return;
+  if(auth){
+    params.delete('auth');
+    const qs=params.toString();
+    history.replaceState({},'',window.location.pathname+(qs?'?'+qs:'')+window.location.hash);
   }
-  showToast('Artist listing payment — server integration coming soon. Booking deposit works now.','error');
+})();
+document.addEventListener('DOMContentLoaded',glowmeInitAuth);
+
+/* ── Listings (data-driven catalog from /api/listings) ── */
+/* Note: this seed data is OUR own (trusted), so template-string innerHTML is
+   fine here. When artists self-onboard (untrusted input), we'll switch to
+   escaped/DOM-built rendering — same trust-boundary rule as the login chip. */
+function glowmeStars(rating){
+  // Reproduces the original hand-authored stars (4.7 → 4★, ≥4.8 → 5★).
+  const full=Math.floor(rating+0.25);
+  return '★'.repeat(full)+'☆'.repeat(Math.max(0,5-full));
+}
+/* Escape for HTML text AND double/single-quoted attribute contexts. Named
+   glowmeEsc to avoid colliding with the chat widget's text-only esc(). */
+function glowmeEsc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function glowmeLoc(l){return l.area?glowmeEsc(l.city)+', '+glowmeEsc(l.area):glowmeEsc(l.city);}
+function glowmeRatingHTML(l,starColor){
+  if(l.rating==null)return '<span class="rating-txt">New</span>'; // artist-created, no reviews yet
+  const st=starColor?' style="color:'+starColor+'"':'';
+  return '<span class="stars"'+st+'>'+glowmeStars(l.rating)+'</span><span class="rating-txt">'+l.rating.toFixed(1)+' ('+(l.reviews??0)+')</span>';
 }
 
-function artistPaymentSuccess(data,response){
-  // Switch to success screen
-  document.getElementById('ap-step-form').style.display='none';
-  document.getElementById('ap-step-success').style.display='block';
-  document.getElementById('ap-success-name').textContent=data.name.split(' ')[0];
-  document.getElementById('ap-payment-id').textContent=response.razorpay_payment_id;
-  document.getElementById('ap-fee-paid').textContent='₹'+CONFIG.ARTIST_LISTING_FEE.toLocaleString('en-IN');
-
-  // ── Owner ko WhatsApp notification ──
-  const ownerMsg=
-    `🌟 *New GlowMe Artist Application!*\n\n`+
-    `👤 *Name:* ${data.name}\n`+
-    `📱 *Phone:* ${data.phone}\n`+
-    `📧 *Email:* ${data.email}\n`+
-    `📍 *City:* ${data.city}\n`+
-    `💄 *Category:* ${data.category}\n`+
-    `✦ *Specialities:* ${data.specs||'Not selected'}\n`+
-    `📅 *Experience:* ${data.exp}\n`+
-    `🔗 *Portfolio:* ${data.portfolio||'Not provided'}\n\n`+
-    `💳 *Listing fee paid:* ₹${CONFIG.ARTIST_LISTING_FEE}\n`+
-    `🆔 *Payment ID:* ${response.razorpay_payment_id}\n\n`+
-    `📝 *About:* ${data.bio||'—'}`;
-  window.open(`https://wa.me/${CONFIG.OWNER_WHATSAPP}?text=${encodeURIComponent(ownerMsg)}`,'_blank');
-
-  // ── Artist ko WhatsApp confirmation ──
-  setTimeout(()=>{
-    const artistMsg=
-      `✨ *GlowMe mein aapka swagat hai!*\n\n`+
-      `Hi ${data.name}! 🎉\n\n`+
-      `Aapki GlowMe artist application receive ho gayi hai.\n\n`+
-      `✅ Listing fee ₹${CONFIG.ARTIST_LISTING_FEE} successfully paid\n`+
-      `🆔 Payment ID: ${response.razorpay_payment_id}\n\n`+
-      `📋 Hamari team aapka profile 48 ghante ke andar review karegi aur is number pe reply karegi.\n\n`+
-      `Koi sawal ho toh directly reply karein!\n\n`+
-      `With love,\nTeam GlowMe 🌸\nglowme.in`;
-    window.open(`https://wa.me/91${data.phone}?text=${encodeURIComponent(artistMsg)}`,'_blank');
-  },1500);
+function artistCardHTML(a){
+  const name=glowmeEsc(a.name);
+  const tags=(a.details.tags||[]).map(t=>'<span class="atag">'+glowmeEsc(t)+'</span>').join('');
+  const avail=a.available?'<div class="artist-avail">Available today</div>':'';
+  return '<div class="artist-card">'
+    +'<div class="artist-img"><img src="'+glowmeEsc(a.image)+'" alt="'+name+'" loading="lazy">'+avail
+    +'<button class="artist-save" onclick="toggleSave(this)">♡</button></div>'
+    +'<div class="artist-info"><div class="artist-name-row"><span class="artist-name">'+name+'</span>'
+    +'<div class="artist-rate">₹'+Number(a.priceFrom||0).toLocaleString('en-IN')+'<span>starting from</span></div></div>'
+    +'<div class="artist-loc">📍 '+glowmeLoc(a)+'</div>'
+    +'<div class="artist-tags">'+tags+'</div>'
+    +'<div class="artist-footer"><div>'+glowmeRatingHTML(a)+'</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="book-btn glowme-book" style="font-size:9px;padding:7px 12px" data-name="'+name+'" data-service="'+glowmeEsc(a.bookService)+'">📅 Calendar</button>'
+    +'<button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>';
 }
 
-/* ═══════════════════════════════════════════════════════════
-   DOM READY — Update dynamic fee amounts in HTML
-   ═══════════════════════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded',()=>{
-  const fd=document.getElementById('ap-fee-display');
-  if(fd)fd.textContent='₹'+CONFIG.ARTIST_LISTING_FEE.toLocaleString('en-IN');
-  const pb=document.getElementById('ap-pay-btn');
-  if(pb)pb.textContent='Pay ₹'+CONFIG.ARTIST_LISTING_FEE.toLocaleString('en-IN')+' & Submit Application →';
+function renderArtists(list){
+  const grid=document.getElementById('artistsGrid');
+  if(!grid)return;
+  grid.innerHTML=list.length
+    ? list.map(artistCardHTML).join('')
+    : '<p class="listings-empty">No artists in this city yet — check back soon.</p>';
+}
+
+function salonCardHTML(s){
+  const d=s.details||{};
+  const name=glowmeEsc(s.name);
+  const chips=(d.chips||[]).map(c=>'<span class="s-chip">'+glowmeEsc(c)+'</span>').join('');
+  const rating=s.rating!=null?glowmeStars(s.rating)+' '+s.rating.toFixed(1):'New';
+  return '<div class="salon-card">'
+    +'<div class="salon-img"><img src="'+glowmeEsc(s.image)+'" alt="'+name+'" loading="lazy"></div>'
+    +'<div class="salon-overlay"><div class="salon-type">'+glowmeEsc(d.type||'')+'</div>'
+    +'<div class="salon-name">'+name+'</div>'
+    +'<div class="salon-loc">📍 '+glowmeLoc(s)+(d.hours?' · '+glowmeEsc(d.hours):'')+'</div>'
+    +'<div class="salon-services-row">'+chips+'</div>'
+    +'<div class="salon-footer"><div class="salon-rating">'+rating+(d.artistsCount?' · '+glowmeEsc(d.artistsCount)+' artists':'')+'</div>'
+    +'<button class="salon-book glowme-book" data-name="'+name+'" data-service="'+glowmeEsc(s.bookService)+'">Book slot</button></div></div></div>';
+}
+
+function nailCardHTML(n){
+  const d=n.details||{};
+  const name=glowmeEsc(n.name);
+  const prices=(d.prices||[]).map(p=>'<div class="npl-row"><span class="npl-name">'+glowmeEsc(p.name)+'</span><span class="npl-price">'+glowmeEsc(p.price)+'</span></div>').join('');
+  return '<div class="nail-card">'
+    +'<div class="nail-img"><img src="'+glowmeEsc(n.image)+'" alt="'+name+'" loading="lazy"><div class="nail-spec">'+glowmeEsc(d.spec||'')+'</div></div>'
+    +'<div class="nail-info"><div class="nail-name">'+name+'</div>'
+    +'<div class="nail-sub">📍 '+glowmeLoc(n)+(d.serviceMode?' · '+glowmeEsc(d.serviceMode):'')+'</div>'
+    +'<div class="nail-price-list">'+prices+'</div>'
+    +'<div class="nail-footer"><div>'+glowmeRatingHTML(n,'var(--blush)')+'</div>'
+    +'<button class="nail-book-btn glowme-book" data-name="'+name+'" data-service="'+glowmeEsc(n.bookService)+'">Book</button></div></div></div>';
+}
+
+function renderSalons(list){
+  const grid=document.getElementById('salonsGrid');
+  if(!grid)return;
+  grid.innerHTML=list.length?list.map(salonCardHTML).join(''):'<p class="listings-empty">No salons in this city yet — check back soon.</p>';
+}
+
+function renderNails(list){
+  const grid=document.getElementById('nailsScroll');
+  if(!grid)return;
+  grid.innerHTML=list.length?list.map(nailCardHTML).join(''):'<p class="listings-empty">No nail specialists in this city yet — check back soon.</p>';
+}
+
+/* City centroids for "Detect me". Our catalog spans only these cities, so we
+   map the browser's GPS coords to the nearest one locally — no geocoding API. */
+const GLOWME_CITY_COORDS={
+  Chandigarh:[30.7333,76.7794],
+  Mohali:[30.7046,76.7179],
+  Panchkula:[30.6942,76.8606],
+  Delhi:[28.6139,77.2090],
+};
+let glowmeAllListings=[];
+let glowmeCities=[];
+let glowmeCity='all';
+let glowmeCurrentArtist=null;
+
+function listingsFor(kind){
+  return glowmeAllListings.filter(l=>l.kind===kind&&(glowmeCity==='all'||l.city===glowmeCity));
+}
+function glowmeRenderAll(){
+  renderArtists(listingsFor('artist'));
+  renderSalons(listingsFor('salon'));
+  renderNails(listingsFor('nail'));
+}
+function buildCityPills(){
+  const wrap=document.getElementById('locPills');
+  if(!wrap)return;
+  wrap.innerHTML=['all',...glowmeCities].map(c=>
+    '<button class="loc-pill'+(c===glowmeCity?' active':'')+'" data-city="'+c+'" onclick="glowmeApplyCity(\''+c+'\')">'+(c==='all'?'All cities':c)+'</button>'
+  ).join('');
+}
+function glowmeApplyCity(city){
+  glowmeCity=city;
+  try{localStorage.setItem('glowme_city',city);}catch{}
+  document.querySelectorAll('.loc-pill').forEach(p=>p.classList.toggle('active',p.dataset.city===city));
+  glowmeRenderAll();
+}
+/* Great-circle distance (km) between two lat/lng points. */
+function glowmeHaversine(lat1,lng1,lat2,lng2){
+  const R=6371,toRad=x=>x*Math.PI/180;
+  const dLat=toRad(lat2-lat1),dLng=toRad(lng2-lng1);
+  const a=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function glowmeNearestCity(lat,lng){
+  let best=null,bestD=Infinity;
+  for(const city of glowmeCities){
+    const c=GLOWME_CITY_COORDS[city];
+    if(!c)continue;
+    const d=glowmeHaversine(lat,lng,c[0],c[1]);
+    if(d<bestD){bestD=d;best=city;}
+  }
+  return bestD<=150?best:null; // sanity threshold: 150km, else "no city near you"
+}
+function glowmeDetectCity(){
+  const btn=document.getElementById('locDetectBtn');
+  if(!navigator.geolocation){showToast('Location isn\'t supported on this browser.','error');return;}
+  if(btn){btn.disabled=true;btn.textContent='Detecting…';}
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      if(btn){btn.disabled=false;btn.textContent='Detect me';}
+      const nearest=glowmeNearestCity(pos.coords.latitude,pos.coords.longitude);
+      if(nearest){glowmeApplyCity(nearest);showToast('Showing results near '+nearest+'.');}
+      else{showToast('No GlowMe city near you yet — pick one manually.','error');}
+    },
+    err=>{
+      if(btn){btn.disabled=false;btn.textContent='Detect me';}
+      showToast(err.code===1?'Location permission denied — pick your city manually.':'Couldn\'t get your location.','error');
+    },
+    {timeout:8000,maximumAge:600000}
+  );
+}
+async function glowmeLoadListings(){
+  try{
+    const res=await fetch('/api/listings');
+    const data=await res.json();
+    glowmeAllListings=data.listings||[];
+    glowmeCities=data.cities||[];
+    let saved=null;try{saved=localStorage.getItem('glowme_city');}catch{}
+    glowmeCity=(saved==='all'||glowmeCities.includes(saved))?saved:'all';
+    buildCityPills();
+    glowmeRenderAll();
+  }catch(err){
+    // Leave the hardcoded fallback cards in place if the API is unreachable.
+    console.warn('Listings load failed; keeping static fallback.',err);
+  }
+}
+/* ── Artist: create/edit my listing ── */
+function glowmeSetVal(id,v){const el=document.getElementById(id);if(el)el.value=(v==null?'':v);}
+async function openMyListing(){
+  const dl=document.getElementById('ml-city-options');
+  if(dl)dl.innerHTML=(glowmeCities||[]).map(c=>'<option value="'+glowmeEsc(c)+'"></option>').join('');
+  const err=document.getElementById('ml-error');if(err)err.textContent='';
+  openAI('mylisting');
+  try{
+    const res=await fetch('/api/my/listing');
+    if(res.status===401){closeAI('mylisting');showToast('Please sign in first.','error');return;}
+    const l=(await res.json()).listing;
+    glowmeSetVal('ml-name', l?l.name:((glowmeCurrentArtist&&glowmeCurrentArtist.name)||''));
+    glowmeSetVal('ml-city', l?l.city:'');
+    glowmeSetVal('ml-area', l&&l.area?l.area:'');
+    glowmeSetVal('ml-price', l&&l.priceFrom?l.priceFrom:'');
+    glowmeSetVal('ml-tags', l&&l.details&&l.details.tags?l.details.tags.join(', '):'');
+    glowmeSetVal('ml-image', l&&l.image?l.image:'');
+  }catch{}
+}
+async function saveMyListing(){
+  const btn=document.getElementById('ml-save-btn');
+  const err=document.getElementById('ml-error');if(err)err.textContent='';
+  const payload={
+    name:document.getElementById('ml-name').value,
+    city:document.getElementById('ml-city').value,
+    area:document.getElementById('ml-area').value,
+    priceFrom:Number(document.getElementById('ml-price').value),
+    tags:document.getElementById('ml-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    image:document.getElementById('ml-image').value,
+  };
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{
+    const res=await fetch('/api/my/listing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json();
+    if(!res.ok){if(err)err.textContent=data.error||'Could not save.';return;}
+    showToast('Your listing is live!');
+    closeAI('mylisting');
+    await glowmeLoadListings();
+    glowmeApplyCity('all'); // show everything so the artist sees their new card
+    const sec=document.getElementById('artists');if(sec)sec.scrollIntoView({behavior:'smooth'});
+  }catch{
+    if(err)err.textContent='Network error — please try again.';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Save my listing →';}
+  }
+}
+
+/* Delegated booking: rendered cards carry data-name/data-service instead of an
+   inline onclick, so no user data is ever interpolated into executable JS. */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.glowme-book');
+  if(b)openCal(b.dataset.name,b.dataset.service);
 });
+document.addEventListener('DOMContentLoaded',glowmeLoadListings);
+
+/* ===== Voice Assistant ===== */
+(function(){
+  let menuOpen=false, recog=null, currentLang=null;
+  window.toggleVoiceMenu=function(){
+    menuOpen=!menuOpen;
+    const m=document.getElementById('voice-menu');
+    if(m) m.classList.toggle('open',menuOpen);
+  };
+  function setStatus(t){const s=document.getElementById('voiceStatus');if(s)s.textContent=t||'';}
+  function setTranscript(t){const s=document.getElementById('voiceTranscript');if(s)s.textContent=t||'';}
+  function dispatchToChat(text){
+    if(!text)return;
+    if(typeof toggleChat==='function'){
+      const w=document.getElementById('chat-window');
+      if(w && !w.classList.contains('open')) toggleChat();
+    }
+    const input=document.getElementById('chat-input');
+    if(input){ input.value=text; if(typeof sendMsg==='function') sendMsg(); }
+  }
+  window.startVoice=function(lang){
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){ setStatus('Voice not supported in this browser'); return; }
+    if(recog){ try{recog.stop();}catch{} }
+    document.querySelectorAll('.voice-lang').forEach(b=>b.classList.toggle('active',b.dataset.lang===lang));
+    currentLang=lang;
+    recog=new SR();
+    recog.lang=lang;
+    recog.interimResults=true;
+    recog.continuous=false;
+    setStatus(lang==='hi-IN'?'सुन रहा हूँ…':'Listening…');
+    setTranscript('');
+    document.getElementById('voice-fab')?.classList.add('listening');
+    let finalText='';
+    recog.onresult=(e)=>{
+      let interim='';
+      for(let i=e.resultIndex;i<e.results.length;i++){
+        const r=e.results[i];
+        if(r.isFinal) finalText+=r[0].transcript;
+        else interim+=r[0].transcript;
+      }
+      setTranscript(finalText+interim);
+    };
+    recog.onerror=(e)=>{
+      document.getElementById('voice-fab')?.classList.remove('listening');
+      if(e.error==='not-allowed'||e.error==='service-not-allowed'){
+        setStatus('Microphone permission denied');
+      } else if(e.error==='no-speech'){
+        setStatus('No speech detected. Try again.');
+      } else {
+        setStatus('Error: '+e.error);
+      }
+    };
+    recog.onend=()=>{
+      document.getElementById('voice-fab')?.classList.remove('listening');
+      const text=(finalText||document.getElementById('voiceTranscript')?.textContent||'').trim();
+      if(text){
+        setStatus('Sending…');
+        dispatchToChat(text);
+        setTimeout(()=>{ setStatus(''); setTranscript(''); window.toggleVoiceMenu(); },600);
+      }
+    };
+    try{ recog.start(); }catch(err){ setStatus('Could not start mic'); document.getElementById('voice-fab')?.classList.remove('listening'); }
+  };
+  document.addEventListener('click',(e)=>{
+    if(!menuOpen) return;
+    const menu=document.getElementById('voice-menu');
+    const fab=document.getElementById('voice-fab');
+    if(menu && !menu.contains(e.target) && fab && !fab.contains(e.target)){
+      menuOpen=false; menu.classList.remove('open');
+    }
+  });
+})();
