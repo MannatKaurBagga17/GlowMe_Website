@@ -114,7 +114,7 @@ function PastCard({ b }: { b: any }) {
           <p className="text-sm text-muted-foreground">{formatDateTime(b.starts_at)} · <span className="capitalize">{b.status.replace("_", " ")}</span></p>
         </div>
         <div className="flex gap-2">
-          <Link to="/artist/$slug" params={{ slug: b.artists?.slug ?? "" }} className="rounded-md border border-border px-3 py-1 text-xs">Rebook</Link>
+          <Link to="/artist/$slug" params={{ slug: b.artists?.slug ?? "" }} search={{ rebook: (b.booking_items ?? []).map((i: any) => i.service_id).filter(Boolean).join(",") || undefined }} className="rounded-md border border-border px-3 py-1 text-xs">Book again</Link>
           {b.status === "completed" && <button onClick={() => setOpen(!open)} className="rounded-md bg-primary px-3 py-1 text-xs text-primary-foreground">{open ? "Cancel" : "Review"}</button>}
         </div>
       </div>

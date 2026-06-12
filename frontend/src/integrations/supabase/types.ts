@@ -24,12 +24,17 @@ export type Database = {
           cancellation_policy: string
           city: string
           created_at: string
+          email: string | null
           hero_image_url: string | null
           id: string
+          languages: string[]
           name: string
           offers_at_home: boolean
           offers_studio: boolean
+          owner_id: string | null
+          phone: string | null
           review_count: number
+          service_radius_km: number
           slug: string
           specialties: string[]
           tagline: string | null
@@ -46,12 +51,17 @@ export type Database = {
           cancellation_policy?: string
           city: string
           created_at?: string
+          email?: string | null
           hero_image_url?: string | null
           id?: string
+          languages?: string[]
           name: string
           offers_at_home?: boolean
           offers_studio?: boolean
+          owner_id?: string | null
+          phone?: string | null
           review_count?: number
+          service_radius_km?: number
           slug: string
           specialties?: string[]
           tagline?: string | null
@@ -68,12 +78,17 @@ export type Database = {
           cancellation_policy?: string
           city?: string
           created_at?: string
+          email?: string | null
           hero_image_url?: string | null
           id?: string
+          languages?: string[]
           name?: string
           offers_at_home?: boolean
           offers_studio?: boolean
+          owner_id?: string | null
+          phone?: string | null
           review_count?: number
+          service_radius_km?: number
           slug?: string
           specialties?: string[]
           tagline?: string | null

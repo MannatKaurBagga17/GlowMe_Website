@@ -11,7 +11,12 @@ import { ServiceModeModal, type ServiceMode } from "@/components/service-mode-mo
 const artistQO = (slug: string) =>
   queryOptions({ queryKey: ["artist", slug], queryFn: () => getArtistBySlug({ data: { slug } }) });
 
+import { z } from "zod";
+
+const artistSearchSchema = z.object({ rebook: z.string().optional() });
+
 export const Route = createFileRoute("/artist/$slug")({
+  validateSearch: (input: Record<string, unknown>) => artistSearchSchema.parse(input),
   loader: async ({ params, context }) => {
     const data = await context.queryClient.ensureQueryData(artistQO(params.slug));
     if (!data.artist) throw notFound();
@@ -32,10 +37,13 @@ export const Route = createFileRoute("/artist/$slug")({
 
 function ArtistPage() {
   const { slug } = Route.useParams();
+  const { rebook } = Route.useSearch();
   const { data } = useSuspenseQuery(artistQO(slug));
   const navigate = useNavigate();
   const artist = data.artist!;
-  const [cart, setCart] = useState<string[]>([]);
+  const validIds = new Set<string>(data.services.map((s) => s.id));
+  const prefill = (rebook ?? "").split(",").filter((id: string) => validIds.has(id));
+  const [cart, setCart] = useState<string[]>(prefill);
   const [signedIn, setSignedIn] = useState(false);
   const [fav, setFav] = useState(false);
   const [modeModal, setModeModal] = useState(false);
