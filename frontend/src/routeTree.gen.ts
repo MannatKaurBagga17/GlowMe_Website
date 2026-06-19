@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArtistSlugRouteImport } from './routes/artist.$slug'
 import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
 import { Route as AuthenticatedFavouritesRouteImport } from './routes/_authenticated/favourites'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth.me'
 import { Route as AuthenticatedBookingArtistIdRouteImport } from './routes/_authenticated/booking.$artistId'
@@ -55,6 +56,11 @@ const AuthenticatedFavouritesRoute = AuthenticatedFavouritesRouteImport.update({
   path: '/favourites',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/account': typeof AuthenticatedAccountRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/favourites': typeof AuthenticatedFavouritesRoute
   '/support': typeof AuthenticatedSupportRoute
   '/artist/$slug': typeof ArtistSlugRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/account': typeof AuthenticatedAccountRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/favourites': typeof AuthenticatedFavouritesRoute
   '/support': typeof AuthenticatedSupportRoute
   '/artist/$slug': typeof ArtistSlugRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
   '/_authenticated/account': typeof AuthenticatedAccountRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/favourites': typeof AuthenticatedFavouritesRoute
   '/_authenticated/support': typeof AuthenticatedSupportRoute
   '/artist/$slug': typeof ArtistSlugRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/account'
+    | '/dashboard'
     | '/favourites'
     | '/support'
     | '/artist/$slug'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/account'
+    | '/dashboard'
     | '/favourites'
     | '/support'
     | '/artist/$slug'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/search'
     | '/_authenticated/account'
+    | '/_authenticated/dashboard'
     | '/_authenticated/favourites'
     | '/_authenticated/support'
     | '/artist/$slug'
@@ -216,6 +228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFavouritesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/account': {
       id: '/_authenticated/account'
       path: '/account'
@@ -249,6 +268,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFavouritesRoute: typeof AuthenticatedFavouritesRoute
   AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
   AuthenticatedBookingArtistIdRoute: typeof AuthenticatedBookingArtistIdRoute
@@ -257,6 +277,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFavouritesRoute: AuthenticatedFavouritesRoute,
   AuthenticatedSupportRoute: AuthenticatedSupportRoute,
   AuthenticatedBookingArtistIdRoute: AuthenticatedBookingArtistIdRoute,

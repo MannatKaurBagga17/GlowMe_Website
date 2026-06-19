@@ -1,0 +1,758 @@
+<div id="scroll-progress"></div>
+<nav id="mainNav">
+  <a href="#" class="logo">Glow<span>Me</span></a>
+  <ul class="nav-links">
+    <li><a href="#artists">Artists</a></li>
+    
+    <li><a href="#nails">Nail Artists</a></li>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#join">For artists</a></li>
+  </ul>
+  <div class="nav-right">
+    <span id="navAuth" class="nav-auth"></span>
+    <a href="#artists" class="nav-book">Book now</a>
+  </div>
+</nav>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">India's luxury beauty marketplace</div>
+    <h1 class="hero-title">The art of<br><em>effortless</em><br>beauty.</h1>
+    <p class="hero-sub">Discover and book India's finest makeup artists, curated salons, and nail specialists — for every occasion, delivered to your door.</p>
+    <div class="hero-ctas">
+      <a href="#artists" class="btn-gold">Explore artists</a>
+      <a href="#nails" class="btn-outline-gold">Nail artists</a>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="scroll-line"></div>Scroll</div>
+</section>
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">Bridal Makeup</div><div class="marquee-item">Nail Extensions</div><div class="marquee-item">HD Airbrush</div><div class="marquee-item">Salon Packages</div><div class="marquee-item">Editorial Looks</div><div class="marquee-item">Natural Glow</div><div class="marquee-item">Party Glam</div><div class="marquee-item">Korean Beauty</div>
+    <div class="marquee-item">Bridal Makeup</div><div class="marquee-item">Nail Extensions</div><div class="marquee-item">HD Airbrush</div><div class="marquee-item">Salon Packages</div><div class="marquee-item">Editorial Looks</div><div class="marquee-item">Natural Glow</div><div class="marquee-item">Party Glam</div><div class="marquee-item">Korean Beauty</div>
+  </div>
+</div>
+<div class="intro">
+  <div class="intro-img reveal-left">
+    <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=900&q=80&fit=crop" alt="Luxury makeup studio" loading="lazy">
+  </div>
+  <div class="intro-content reveal-right">
+    <div class="sec-label">Our promise</div>
+    <h2 class="sec-title">Beauty, <em>curated</em><br>with care.</h2>
+    <div class="divider"></div>
+    <p>Every artist on GlowMe is hand-verified by our team. We review their portfolio, check their credentials, and only list professionals who meet our standard of excellence.</p>
+    <p>From intimate bridal preparations to bold editorial shoots — we connect you with the right artist for every moment.</p>
+    <div class="stats-row">
+      <div><span class="stat-num" data-target="340">0</span><span class="stat-label">Verified artists</span></div>
+      <div><span class="stat-num" data-target="48">0</span><span class="stat-label">Partner salons</span></div>
+      <div><span class="stat-num" data-target="12">0</span><span class="stat-label">Cities covered</span></div>
+    </div>
+  </div>
+</div>
+<section class="section services-section" id="services">
+  <div class="sec-label reveal">Our services</div>
+  <h2 class="sec-title reveal">Every look, <em>perfected.</em></h2>
+  <div class="services-grid">
+    <div class="service-card reveal d1"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80&fit=crop" alt="Bridal makeup" loading="lazy"><div class="service-overlay"><div class="service-num">01</div><div class="service-arrow">↗</div><div class="service-name">Bridal</div><div class="service-count">124 artists available</div></div></div>
+    <div class="service-card reveal d2"><img src="https://images.unsplash.com/photo-1470259078422-826894b933aa?w=600&q=80&fit=crop" alt="Party makeup" loading="lazy"><div class="service-overlay"><div class="service-num">02</div><div class="service-arrow">↗</div><div class="service-name">Party & Events</div><div class="service-count">98 artists available</div></div></div>
+    <div class="service-card reveal d3"><img src="https://images.unsplash.com/photo-1583001931096-959e9a1a6223?w=600&q=80&fit=crop" alt="Nail extensions" loading="lazy"><div class="service-overlay"><div class="service-num">03</div><div class="service-arrow">↗</div><div class="service-name">Nail Extensions</div><div class="service-count">38 artists available</div></div></div>
+    <div class="service-card reveal d4"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80&fit=crop" alt="HD Airbrush" loading="lazy"><div class="service-overlay"><div class="service-num">04</div><div class="service-arrow">↗</div><div class="service-name">HD & Airbrush</div><div class="service-count">45 artists available</div></div></div>
+    <div class="service-card reveal d5"><img src="https://images.unsplash.com/photo-1560750133-db39a50af8b9?w=600&q=80&fit=crop" alt="Salon services" loading="lazy"><div class="service-overlay"><div class="service-num">05</div><div class="service-arrow">↗</div><div class="service-name">Salon Packages</div><div class="service-count">48 salons listed</div></div></div>
+    <div class="service-card reveal d6"><img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80&fit=crop" alt="Editorial makeup" loading="lazy"><div class="service-overlay"><div class="service-num">06</div><div class="service-arrow">↗</div><div class="service-name">Editorial</div><div class="service-count">56 artists available</div></div></div>
+  </div>
+</section>
+<div class="loc-filter">
+  <div class="loc-filter-inner">
+    <span class="loc-filter-label">📍 Your city</span>
+    <div class="loc-pills" id="locPills"></div>
+    <button class="loc-detect" id="locDetectBtn" onclick="glowmeDetectCity()">Detect me</button>
+  </div>
+</div>
+<section class="section artists-section" id="artists">
+  <div class="artists-header">
+    <div><div class="sec-label reveal">Top rated</div><h2 class="sec-title reveal">Featured <em>artists</em></h2></div>
+    <a href="#" class="view-all reveal">View all 340+ →</a>
+  </div>
+  <div class="artists-grid" id="artistsGrid">
+    <div class="artist-card reveal d1">
+      <div class="artist-img"><img src="https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80&fit=crop&crop=face" alt="Priya Mehta" loading="lazy"><div class="artist-avail">Available today</div><button class="artist-save" onclick="toggleSave(this)">♡</button></div>
+      <div class="artist-info"><div class="artist-name-row"><span class="artist-name">Priya Mehta</span><div class="artist-rate">₹3,500<span>starting from</span></div></div><div class="artist-loc">📍 Chandigarh, Sector 17</div><div class="artist-tags"><span class="atag">Bridal</span><span class="atag">Airbrush</span><span class="atag">HD</span></div><div class="artist-footer"><div><span class="stars">★★★★★</span><span class="rating-txt">4.9 (128)</span></div><div style="display:flex;gap:8px"><button class="book-btn" style="font-size:9px;padding:7px 12px" onclick="openCal('Priya Mehta','Bridal')">📅 Calendar</button><button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>
+    </div>
+    <div class="artist-card reveal d2">
+      <div class="artist-img"><img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=600&q=80&fit=crop&crop=face" alt="Simran Kaur" loading="lazy"><button class="artist-save" onclick="toggleSave(this)">♡</button></div>
+      <div class="artist-info"><div class="artist-name-row"><span class="artist-name">Simran Kaur</span><div class="artist-rate">₹2,800<span>starting from</span></div></div><div class="artist-loc">📍 Mohali, Phase 10</div><div class="artist-tags"><span class="atag">Party</span><span class="atag">Natural</span><span class="atag">Korean</span></div><div class="artist-footer"><div><span class="stars">★★★★★</span><span class="rating-txt">4.8 (94)</span></div><div style="display:flex;gap:8px"><button class="book-btn" style="font-size:9px;padding:7px 12px" onclick="openCal('Simran Kaur','Party Makeup')">📅 Calendar</button><button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>
+    </div>
+    <div class="artist-card reveal d3">
+      <div class="artist-img"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80&fit=crop&crop=face" alt="Anjali Sharma" loading="lazy"><div class="artist-avail">Available today</div><button class="artist-save" onclick="toggleSave(this)">♡</button></div>
+      <div class="artist-info"><div class="artist-name-row"><span class="artist-name">Anjali Sharma</span><div class="artist-rate">₹5,000<span>starting from</span></div></div><div class="artist-loc">📍 Delhi, South Ex</div><div class="artist-tags"><span class="atag">Bridal</span><span class="atag">Editorial</span><span class="atag">HD</span></div><div class="artist-footer"><div><span class="stars">★★★★★</span><span class="rating-txt">5.0 (211)</span></div><div style="display:flex;gap:8px"><button class="book-btn" style="font-size:9px;padding:7px 12px" onclick="openCal('Anjali Sharma','Bridal')">📅 Calendar</button><button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>
+    </div>
+    <div class="artist-card reveal d4">
+      <div class="artist-img"><img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&q=80&fit=crop&crop=face" alt="Neha Patel" loading="lazy"><button class="artist-save" onclick="toggleSave(this)">♡</button></div>
+      <div class="artist-info"><div class="artist-name-row"><span class="artist-name">Neha Patel</span><div class="artist-rate">₹2,200<span>starting from</span></div></div><div class="artist-loc">📍 Chandigarh, Panchkula</div><div class="artist-tags"><span class="atag">Party</span><span class="atag">Glow</span><span class="atag">Airbrush</span></div><div class="artist-footer"><div><span class="stars">★★★★☆</span><span class="rating-txt">4.7 (67)</span></div><div style="display:flex;gap:8px"><button class="book-btn" style="font-size:9px;padding:7px 12px" onclick="openCal('Neha Patel','Party Makeup')">📅 Calendar</button><button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>
+    </div>
+    <div class="artist-card reveal d5">
+      <div class="artist-img"><img src="https://images.unsplash.com/photo-1502767089025-6572583495f9?w=600&q=80&fit=crop&crop=face" alt="Riya Batra" loading="lazy"><div class="artist-avail">Available today</div><button class="artist-save" onclick="toggleSave(this)">♡</button></div>
+      <div class="artist-info"><div class="artist-name-row"><span class="artist-name">Riya Batra</span><div class="artist-rate">₹4,000<span>starting from</span></div></div><div class="artist-loc">📍 Delhi, Lajpat Nagar</div><div class="artist-tags"><span class="atag">Bridal</span><span class="atag">HD</span></div><div class="artist-footer"><div><span class="stars">★★★★★</span><span class="rating-txt">4.9 (156)</span></div><div style="display:flex;gap:8px"><button class="book-btn" style="font-size:9px;padding:7px 12px" onclick="openCal('Riya Batra','Bridal')">📅 Calendar</button><button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>
+    </div>
+    <div class="artist-card reveal d6">
+      <div class="artist-img"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=80&fit=crop&crop=face" alt="Kavya Nair" loading="lazy"><button class="artist-save" onclick="toggleSave(this)">♡</button></div>
+      <div class="artist-info"><div class="artist-name-row"><span class="artist-name">Kavya Nair</span><div class="artist-rate">₹3,200<span>starting from</span></div></div><div class="artist-loc">📍 Chandigarh, Sector 35</div><div class="artist-tags"><span class="atag">Natural</span><span class="atag">Korean</span><span class="atag">Glow</span></div><div class="artist-footer"><div><span class="stars">★★★★★</span><span class="rating-txt">4.8 (89)</span></div><div style="display:flex;gap:8px"><button class="book-btn" style="font-size:9px;padding:7px 12px" onclick="openCal('Kavya Nair','Natural Look')">📅 Calendar</button><button class="book-btn" onclick="bookIt(this)">Book</button></div></div></div>
+    </div>
+  </div>
+</section>
+<section class="bridal-section" id="bridal">
+  <div class="bridal-content">
+    <div class="sec-label">Advance booking</div>
+    <h2 class="sec-title">Reserve your <em>bridal artist</em> — up to 12 months ahead.</h2>
+    <div class="divider"></div>
+    <p>Wedding season books fast. Secure your date today with a simple 30% deposit. Your artist is confirmed, your calendar is locked.</p>
+    <div class="bridal-stats">
+      <div><span class="bs-num">12</span><span class="bs-label">Months advance booking</span></div>
+      <div><span class="bs-num">30%</span><span class="bs-label">Deposit to secure date</span></div>
+      <div><span class="bs-num">124</span><span class="bs-label">Bridal artists</span></div>
+    </div>
+    <a href="#artists" class="btn-gold">Check bridal availability</a>
+  </div>
+</section>
+<section class="section nails-section" id="nails">
+  <div class="artists-header">
+    <div><div class="sec-label reveal" style="color:var(--blush)">Nail specialists</div><h2 class="sec-title reveal">Nail art and <em style="color:var(--blush)">extensions.</em></h2></div>
+    <a href="#" class="view-all reveal" style="color:var(--blush)">All nail artists →</a>
+  </div>
+  <div class="nails-scroll" id="nailsScroll">
+    <div class="nail-card reveal d1"><div class="nail-img"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&fit=crop" alt="Ritika Bose" loading="lazy"><div class="nail-spec">Extension specialist</div></div><div class="nail-info"><div class="nail-name">Ritika Bose</div><div class="nail-sub">📍 Chandigarh, Sector 26 · Home service</div><div class="nail-price-list"><div class="npl-row"><span class="npl-name">Acrylic extensions</span><span class="npl-price">₹1,200</span></div><div class="npl-row"><span class="npl-name">Gel extensions</span><span class="npl-price">₹1,000</span></div><div class="npl-row"><span class="npl-name">Ombre extensions</span><span class="npl-price">₹1,800</span></div><div class="npl-row"><span class="npl-name">Nail art per nail</span><span class="npl-price">₹80</span></div></div><div class="nail-footer"><div><span class="stars" style="color:var(--blush)">★★★★★</span><span class="rating-txt">4.9 (76)</span></div><button class="nail-book-btn" onclick="openCal('Ritika Bose','Nail Extensions')">Book</button></div></div></div>
+    <div class="nail-card reveal d2"><div class="nail-img"><img src="https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=600&q=80&fit=crop" alt="Deepa Verma" loading="lazy"><div class="nail-spec">3D nail art</div></div><div class="nail-info"><div class="nail-name">Deepa Verma</div><div class="nail-sub">📍 Mohali, Phase 9 · Salon visit only</div><div class="nail-price-list"><div class="npl-row"><span class="npl-name">3D nail art</span><span class="npl-price">₹150/nail</span></div><div class="npl-row"><span class="npl-name">Gel polish full set</span><span class="npl-price">₹600</span></div><div class="npl-row"><span class="npl-name">Bridal nail package</span><span class="npl-price">₹2,500</span></div><div class="npl-row"><span class="npl-name">Stamping and foils</span><span class="npl-price">₹900</span></div></div><div class="nail-footer"><div><span class="stars" style="color:var(--blush)">★★★★★</span><span class="rating-txt">4.8 (54)</span></div><button class="nail-book-btn" onclick="openCal('Deepa Verma','Nail Art')">Book</button></div></div></div>
+    <div class="nail-card reveal d3"><div class="nail-img"><img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80&fit=crop&crop=bottom" alt="Sunita Malik" loading="lazy"><div class="nail-spec">Extensions and repair</div></div><div class="nail-info"><div class="nail-name">Sunita Malik</div><div class="nail-sub">📍 Panchkula, Sector 8 · Home service</div><div class="nail-price-list"><div class="npl-row"><span class="npl-name">Soft gel extensions</span><span class="npl-price">₹1,000</span></div><div class="npl-row"><span class="npl-name">Refill</span><span class="npl-price">₹500</span></div><div class="npl-row"><span class="npl-name">Chrome nails</span><span class="npl-price">₹1,200</span></div><div class="npl-row"><span class="npl-name">Nail removal</span><span class="npl-price">₹200</span></div></div><div class="nail-footer"><div><span class="stars" style="color:var(--blush)">★★★★☆</span><span class="rating-txt">4.7 (41)</span></div><button class="nail-book-btn" onclick="openCal('Sunita Malik','Nail Extensions')">Book</button></div></div></div>
+  </div>
+</section>
+<section class="section how-section" id="how">
+  <div class="sec-label">Simple as that</div>
+  <h2 class="sec-title">How <em>GlowMe</em> works.</h2>
+  <div class="how-grid">
+    <div class="how-step reveal d1"><span class="how-num">01</span><span class="how-icon">⌕</span><div class="how-title">Browse and discover</div><p class="how-desc">Search artists by style, location, budget, and live availability. Read verified reviews and browse real portfolio photos.</p></div>
+    <div class="how-step reveal d2"><span class="how-num">02</span><span class="how-icon">📅</span><div class="how-title">Check calendar</div><p class="how-desc">See real-time availability. For bridal, book up to 12 months in advance and lock your date with a 30% deposit.</p></div>
+    <div class="how-step reveal d3"><span class="how-num">03</span><span class="how-icon">◎</span><div class="how-title">Book and secure</div><p class="how-desc">Pay your deposit securely via UPI, card, or wallet. Balance is only charged after your appointment is done.</p></div>
+    <div class="how-step reveal d4"><span class="how-num">04</span><span class="how-icon">✦</span><div class="how-title">Get glam</div><p class="how-desc">Your artist arrives ready. Leave a verified review after your session and help others find their perfect artist.</p></div>
+  </div>
+</section>
+<section class="section testi-section">
+  <div class="artists-header"><div><div class="sec-label reveal">Client love</div><h2 class="sec-title reveal">What they're <em>saying.</em></h2></div></div>
+  <div class="testi-grid">
+    <div class="testi-card reveal d1"><div class="testi-stars">★★★★★</div><p class="testi-quote">"Booked Priya 6 months in advance for my wedding. She was flawless. The calendar feature made it so easy to find her last open slot."</p><div class="testi-author"><div class="testi-av"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&q=80&fit=crop&crop=face" alt="Sneha Arora" loading="lazy"></div><div><div class="testi-name">Sneha Arora</div><div class="testi-city">Chandigarh · Bridal</div></div></div></div>
+    <div class="testi-card reveal d2"><div class="testi-stars">★★★★★</div><p class="testi-quote">"Got nail extensions done at Gloss Studio through GlowMe. Booked a slot in 2 minutes and the work was absolutely stunning."</p><div class="testi-author"><div class="testi-av"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&fit=crop&crop=face" alt="Meera Kapoor" loading="lazy"></div><div><div class="testi-name">Meera Kapoor</div><div class="testi-city">Mohali · Nail extensions</div></div></div></div>
+    <div class="testi-card reveal d3"><div class="testi-stars">★★★★★</div><p class="testi-quote">"Booked The Bridal Atelier for my sister's full package — makeup, hair, nails, draping — all from one place. Absolutely magical."</p><div class="testi-author"><div class="testi-av"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&q=80&fit=crop&crop=face" alt="Ritu Singh" loading="lazy"></div><div><div class="testi-name">Ritu Singh</div><div class="testi-city">Delhi · Full bridal package</div></div></div></div>
+  </div>
+</section>
+<!-- PACKAGES SECTION -->
+<section class="section" id="packages" style="background:var(--black);">
+  <div class="sec-label reveal">Beauty packages</div>
+  <h2 class="sec-title reveal">Choose your <em>package.</em></h2>
+  <p class="reveal" style="font-family:var(--cg);font-size:18px;color:var(--muted);margin-top:8px;margin-bottom:48px;line-height:1.7;">Every package uses real, quality products. Choose based on your budget — same skilled artist, same care.</p>
+
+  
+
+  <div class="pkg-grid reveal">
+
+    <!-- ESSENTIAL -->
+    <div class="pkg-card">
+      <div class="pkg-top">
+        <div class="pkg-tier">Essential</div>
+        <div class="pkg-name">Basic Glow</div>
+        <div class="pkg-tagline">Quality products, beautiful results. Perfect for everyday events and parties.</div>
+        <div class="pkg-price">₹2,200+</div>
+        <div class="pkg-price-sub">Starting price · 30% deposit to book</div>
+      </div>
+      <div class="pkg-divider"></div>
+      <div class="pkg-features">
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Foundation</strong> — Good coverage drugstore brands (Maybelline, L'Oreal, NYX)</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Eyes</strong> — Basic eyeshadow palette, kajal, mascara</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Lip</strong> — Lipstick and lip liner from mid-range brands</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Setting</strong> — Standard setting powder and spray</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Lasts</strong> — 6–8 hours with regular touch-ups</span></div>
+      </div>
+      <div class="pkg-products">
+        <span class="pkg-prod-label">Products used</span>
+        <div class="pkg-prod-item">Maybelline Fit Me / L'Oreal Infallible Foundation</div>
+        <div class="pkg-prod-item">NYX eyeshadow palette</div>
+        <div class="pkg-prod-item">Lakme kajal and mascara</div>
+        <div class="pkg-prod-item">Colorbar / Lakme lipstick</div>
+        <div class="pkg-prod-item">Setting spray and powder</div>
+      </div>
+      <button class="pkg-btn outline" onclick="openCal('Priya Mehta','Party Makeup')">Book Essential</button>
+    </div>
+
+    <!-- STANDARD — POPULAR -->
+    <div class="pkg-card popular">
+      <div class="pkg-badge">Most Popular</div>
+      <div class="pkg-top">
+        <div class="pkg-tier">Standard</div>
+        <div class="pkg-name">Signature Glow</div>
+        <div class="pkg-tagline">Professional products with longer wear. Perfect for weddings, events, and photoshoots.</div>
+        <div class="pkg-price">₹4,500+</div>
+        <div class="pkg-price-sub">Starting price · 30% deposit to book</div>
+      </div>
+      <div class="pkg-divider"></div>
+      <div class="pkg-features">
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Foundation</strong> — Professional airbrush or HD foundation (Kryolan, RCMA)</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Eyes</strong> — Professional eyeshadow palette, individual lashes, HD kajal</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Lip</strong> — MAC or Bobbi Brown lip colour, long-wear formula</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Skin prep</strong> — Primer, setting spray, professional powder</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Lasts</strong> — 10–12 hours, camera-ready finish</span></div>
+      </div>
+      <div class="pkg-products">
+        <span class="pkg-prod-label">Products used</span>
+        <div class="pkg-prod-item">Kryolan HD / RCMA Foundation</div>
+        <div class="pkg-prod-item">Morphe / Sigma eyeshadow palette</div>
+        <div class="pkg-prod-item">MAC lipstick and liner</div>
+        <div class="pkg-prod-item">Ardell / Crisscross individual lashes</div>
+        <div class="pkg-prod-item">Urban Decay setting spray</div>
+      </div>
+      <button class="pkg-btn" onclick="openCal('Anjali Sharma','Bridal')">Book Standard</button>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="pkg-card">
+      <div class="pkg-top">
+        <div class="pkg-tier">Premium</div>
+        <div class="pkg-name">Elite Bridal</div>
+        <div class="pkg-tagline">International luxury brands. Full bridal experience. For your most important day.</div>
+        <div class="pkg-price">₹8,000+</div>
+        <div class="pkg-price-sub">Starting price · 30% deposit to book</div>
+      </div>
+      <div class="pkg-divider"></div>
+      <div class="pkg-features">
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Foundation</strong> — Giorgio Armani, Charlotte Tilbury, or Dior airbrush base</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Eyes</strong> — Charlotte Tilbury, Pat McGrath, or Natasha Denona palette</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Lip</strong> — Charlotte Tilbury Pillow Talk or Dior lip combo</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Skin prep</strong> — Full skincare prep, primer, luxury setting products</span></div>
+        <div class="pkg-feat"><span class="pkg-feat-icon">✦</span><span class="pkg-feat-text"><strong>Lasts</strong> — 14–16 hours · Fully photo and video proof</span></div>
+      </div>
+      <div class="pkg-products">
+        <span class="pkg-prod-label">Products used</span>
+        <div class="pkg-prod-item">Giorgio Armani / Charlotte Tilbury foundation</div>
+        <div class="pkg-prod-item">Pat McGrath or Natasha Denona palette</div>
+        <div class="pkg-prod-item">Charlotte Tilbury lip and cheek</div>
+        <div class="pkg-prod-item">Lashify or Shu Uemura lashes</div>
+        <div class="pkg-prod-item">Charlotte Tilbury airbrush setting spray</div>
+      </div>
+      <button class="pkg-btn outline" onclick="openCal('Anjali Sharma','Bridal')">Book Premium</button>
+    </div>
+
+  </div>
+
+  <div class="reveal" style="text-align:center;margin-top:36px;padding:20px;border:0.5px solid rgba(201,169,110,0.1);">
+    <p style="font-size:13px;color:var(--muted);line-height:1.8;">Not sure which package? <span style="color:var(--gold);">Chat with our AI concierge</span> — it will suggest the best package for your skin tone, occasion, and budget.</p>
+    <button onclick="toggleChat()" style="margin-top:12px;background:none;border:0.5px solid var(--gold);color:var(--gold);padding:10px 28px;font-family:var(--body);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;">Ask AI concierge</button>
+  </div>
+</section>
+
+<div class="join-section" id="join">
+  <div class="join-img reveal-left"><img src="https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=900&q=80&fit=crop" alt="Join GlowMe" loading="lazy"></div>
+  <div class="join-content reveal-right">
+    <div class="sec-label">For artists and salons</div>
+    <h2 class="sec-title">Your talent.<br><em>Our platform.</em></h2>
+    <div class="divider"></div>
+    <p>List your portfolio, set your own prices, and receive bookings directly on your phone. GlowMe handles payments, disputes, and client management.</p>
+    <ul class="join-perks">
+      <li class="join-perk"><div class="perk-line"></div>You keep 85% of every booking</li>
+      <li class="join-perk"><div class="perk-line"></div>Payouts within 48 hours of each job</li>
+      <li class="join-perk"><div class="perk-line"></div>Free to list — no monthly fees</li>
+      <li class="join-perk"><div class="perk-line"></div>Advance bridal bookings up to 12 months</li>
+      <li class="join-perk"><div class="perk-line"></div>Client disputes handled entirely by us</li>
+    </ul>
+    <a href="#" class="btn-gold" style="display:inline-block;margin-top:4px">Apply as artist or salon</a>
+    <div class="join-stats">
+      <div class="js-card"><span class="js-num">₹42k</span><span class="js-label">Avg monthly earnings</span></div>
+      <div class="js-card"><span class="js-num">388+</span><span class="js-label">Artists and salons listed</span></div>
+      <div class="js-card"><span class="js-num">48hr</span><span class="js-label">Guaranteed payout</span></div>
+      <div class="js-card"><span class="js-num">85%</span><span class="js-label">You keep every rupee</span></div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-gold-line"></div>
+  <div class="footer-top">
+    <div><a href="#" class="footer-logo">Glow<span>Me</span></a><p class="footer-desc">India's trusted marketplace to book verified makeup artists, salons, and nail specialists for any occasion.</p></div>
+    <div class="footer-col"><h4>For clients</h4><ul><li><a href="#">Browse artists</a></li><li><a href="#">Salons</a></li><li><a href="#">Nail artists</a></li><li><a href="#">Gift cards</a></li></ul></div>
+    <div class="footer-col"><h4>For vendors</h4><ul><li><a href="#">Apply to join</a></li><li><a href="#">Artist dashboard</a></li><li><a href="#">Commission rates</a></li><li><a href="#">Success stories</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About us</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li><li><a href="#">Careers</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><span class="footer-copy">2026 GlowMe. All rights reserved.</span><div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Vendor terms</a><a href="#">Cancellation</a></div></div>
+</footer>
+<div class="modal-overlay" id="calModal" onclick="closeIfBg(event)">
+  <div class="modal">
+    <div class="modal-head"><div><div class="modal-artist-name" id="modalName">Artist</div><div class="modal-artist-sub" id="modalSub">Check availability</div></div><button class="modal-close" onclick="closeCal()">x</button></div>
+    <div class="modal-body">
+      <span class="cal-label">Select service</span>
+      <div class="service-pills" id="svcPills"></div>
+      <div class="cal-nav-row"><button class="cal-btn" onclick="chMonth(-1)">prev</button><div class="cal-month-name" id="calMonthName">May 2026</div><button class="cal-btn" onclick="chMonth(1)">next</button></div>
+      <div class="cal-days-header"><div class="cal-day-name">Su</div><div class="cal-day-name">Mo</div><div class="cal-day-name">Tu</div><div class="cal-day-name">We</div><div class="cal-day-name">Th</div><div class="cal-day-name">Fr</div><div class="cal-day-name">Sa</div></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend"><div class="leg"><div class="leg-dot leg-a"></div>Available</div><div class="leg"><div class="leg-dot leg-b"></div>Booked</div><div class="leg"><div class="leg-dot leg-adv"></div>Advance</div></div>
+      <div id="timeSection" style="display:none" class="time-section"><span class="cal-label">Time slots for <span id="selDateLbl"></span></span><div class="time-slots" id="timeSlots"></div></div>
+    </div>
+    <div class="modal-confirm"><div class="booking-sum" id="bookSum">Select a service and date to continue.</div><button class="confirm-btn" onclick="confirmBook()">Confirm and pay 50% deposit</button></div>
+  </div>
+</div>
+<!-- Voice Assistant -->
+<button id="voice-fab" onclick="toggleVoiceMenu()" aria-label="Voice assistant">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+</button>
+<div id="voice-menu">
+  <div class="voice-menu-title">Choose language</div>
+  <button class="voice-lang" data-lang="en-US" onclick="startVoice('en-US')"><span class="vflag">🇬🇧</span> English</button>
+  <button class="voice-lang" data-lang="hi-IN" onclick="startVoice('hi-IN')"><span class="vflag">🇮🇳</span> Hindi</button>
+  <div class="voice-status" id="voiceStatus"></div>
+  <div class="voice-transcript" id="voiceTranscript"></div>
+</div>
+<button id="chat-bubble" onclick="toggleChat()">G</button>
+<div id="chat-window">
+  <div class="chat-head"><div class="chat-av">G</div><div><div class="chat-head-name">GlowMe Concierge</div><div class="chat-head-status">AI-powered</div></div><button class="chat-close-btn" onclick="toggleChat()">x</button></div>
+  <div class="chat-qr" id="chatQR"><button class="qrb" onclick="qa('Find me a bridal makeup artist')">Bridal</button><button class="qrb" onclick="qa('What nail services do you have?')">Nails</button><button class="qrb" onclick="qa('How does booking work?')">Booking</button><button class="qrb" onclick="qa('What salons are in Chandigarh?')">Salons</button></div>
+  <div class="chat-msgs" id="chatMsgs"></div>
+  <div class="chat-input-row"><textarea id="chat-input" placeholder="Ask about artists, services..." rows="1" onkeydown="ck(event)" oninput="ar(this)"></textarea><button id="chat-send" onclick="sendMsg()">Send</button></div>
+</div>
+
+
+
+<!-- ══════════════════════════
+     AI MODAL 1: LOOK RECOMMENDER
+     ══════════════════════════ -->
+<!-- ══════════════════════════════════════════════════
+     AI LOOK RECOMMENDER — REBUILT WITH INDIAN LOOKS
+     ══════════════════════════════════════════════════ -->
+
+
+<div class="ai-modal-overlay" id="modal-mylisting" onclick="closeAI('mylisting',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">My GlowMe listing</div><div class="ai-msub">✦ How customers find and book you</div></div>
+      <button class="ai-mclose" onclick="closeAI('mylisting')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">Display name</span>
+      <input class="ai-input" id="ml-name" maxlength="60" placeholder="e.g. Priya Mehta">
+      <span class="ai-label">City</span>
+      <input class="ai-input" id="ml-city" maxlength="40" placeholder="e.g. Chandigarh" list="ml-city-options" autocomplete="off">
+      <datalist id="ml-city-options"></datalist>
+      <span class="ai-label">Area (optional)</span>
+      <input class="ai-input" id="ml-area" maxlength="40" placeholder="e.g. Sector 17">
+      <span class="ai-label">Starting price (₹)</span>
+      <input class="ai-input" type="number" id="ml-price" min="100" max="1000000" placeholder="e.g. 3500">
+      <span class="ai-label">Specialities (comma-separated, up to 5)</span>
+      <input class="ai-input" id="ml-tags" maxlength="120" placeholder="e.g. Bridal, Airbrush, HD">
+      <span class="ai-label">Photo URL (optional)</span>
+      <input class="ai-input" id="ml-image" maxlength="500" placeholder="https://...">
+      <div class="ml-error" id="ml-error"></div>
+      <button class="ai-btn" id="ml-save-btn" onclick="saveMyListing()">Save my listing →</button>
+    </div>
+  </div>
+</div>
+<div class="ai-modal-overlay" id="modal-look" onclick="closeAI('look',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div>
+        <div class="ai-mtitle">AI Look Recommender</div>
+        <div class="ai-msub">&#10006; Camera or upload &#183; AI detects skin tone &#183; India + worldwide looks</div>
+      </div>
+      <button class="ai-mclose" onclick="closeAI('look')">&#10005;</button>
+    </div>
+    <div class="ai-mbody">
+      <div class="look-steps">
+        <div class="look-step active" id="lstep-1" onclick="goLookStep(1)">1 &#183; Your photo</div>
+        <div class="look-step" id="lstep-2" onclick="goLookStep(2)">2 &#183; Pick a look</div>
+        <div class="look-step" id="lstep-3" onclick="goLookStep(3)">3 &#183; AI result</div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="look-pane active" id="lpane-1">
+        <span class="ai-label">Take a photo or upload a selfie</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <!-- Camera button — opens phone/laptop camera directly -->
+          <button onclick="document.getElementById('look-camera-input').click()" style="background:rgba(201,169,110,0.08);border:0.5px solid rgba(201,169,110,0.3);color:var(--gold);padding:14px;font-family:var(--body);font-size:12px;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;">
+            📷 Camera
+          </button>
+          <!-- Upload button -->
+          <button onclick="document.getElementById('look-selfie-input').click()" style="background:rgba(201,169,110,0.08);border:0.5px solid rgba(201,169,110,0.3);color:var(--gold);padding:14px;font-family:var(--body);font-size:12px;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;">
+            🖼 Upload Selfie
+          </button>
+        </div>
+
+        <!-- Hidden inputs -->
+        <!-- Camera input — capture="user" opens front camera on mobile, camera app on desktop -->
+        <input type="file" id="look-camera-input" accept="image/*" capture="user" style="display:none" onchange="lookSelfieUploaded(this)">
+        <!-- Upload input — opens gallery/file picker -->
+        <input type="file" id="look-selfie-input" accept="image/*" style="display:none" onchange="lookSelfieUploaded(this)">
+        <canvas id="photo-canvas" style="display:none;"></canvas>
+
+        <!-- Photo preview (hidden until photo taken/uploaded) -->
+        <div id="look-upload-zone" style="display:none;border:0.5px solid rgba(201,169,110,0.3);margin-bottom:12px;">
+          <img id="look-selfie-preview" style="width:100%;max-height:200px;object-fit:cover;display:block;">
+          <div style="padding:8px 12px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:11px;color:var(--gold);" id="tone-detected-label">Analysing skin tone...</span>
+            <button onclick="document.getElementById('look-selfie-input').click()" style="background:none;border:0.5px solid rgba(201,169,110,0.3);color:var(--muted);padding:4px 10px;font-size:10px;cursor:pointer;font-family:var(--body);">Change</button>
+          </div>
+        </div>
+
+        <!-- Placeholder (shown before any photo) -->
+        <div id="look-no-photo" class="photo-upload-zone" onclick="document.getElementById('look-selfie-input').click()" style="margin-bottom:12px;">
+          <div class="photo-upload-icon">&#9678;</div>
+          <div class="photo-upload-title">Or click here to upload from gallery</div>
+          <div class="photo-upload-sub">Face forward &#183; Good lighting &#183; Never stored</div>
+        </div>
+
+        <div id="skin-tone-result-box" style="display:none;background:rgba(201,169,110,0.06);border:0.5px solid rgba(201,169,110,0.2);padding:14px 16px;margin-bottom:14px;">
+          <span class="ai-label" style="margin-bottom:6px;display:block;">Your skin tone (AI detected)</span>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div id="detected-swatch" style="width:40px;height:40px;border-radius:50%;border:2px solid var(--gold);flex-shrink:0;"></div>
+            <div>
+              <div id="detected-tone-name" style="font-size:14px;font-weight:500;color:var(--cream);"></div>
+              <div id="detected-tone-desc" style="font-size:11px;color:var(--muted);margin-top:3px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <span class="ai-label">Or select skin tone manually</span>
+        <div class="tone-grid" style="margin-bottom:6px;">
+          <div class="tone-swatch" style="background:#FDDBB4" onclick="selLookTone(this,'fair','#FDDBB4','Fair','Light complexion, pink or yellow undertones')" title="Fair"></div>
+          <div class="tone-swatch" style="background:#F2C18D" onclick="selLookTone(this,'light','#F2C18D','Light Wheatish','Common in North India, warm golden undertone')" title="Light wheatish"></div>
+          <div class="tone-swatch" style="background:#E0A07A" onclick="selLookTone(this,'medium','#E0A07A','Medium Wheatish','Most common Indian skin, warm brown')" title="Medium wheatish"></div>
+          <div class="tone-swatch" style="background:#C47E55" onclick="selLookTone(this,'tan','#C47E55','Tan / Dusky','Golden-brown, richly pigmented')" title="Tan / Dusky"></div>
+          <div class="tone-swatch" style="background:#8D5524" onclick="selLookTone(this,'deep','#8D5524','Deep Brown','Deep warm brown, South Indian')" title="Deep brown"></div>
+          <div class="tone-swatch" style="background:#4A2912" onclick="selLookTone(this,'rich','#4A2912','Rich / Dark','Very deep, richly pigmented')" title="Rich / Dark"></div>
+        </div>
+        <p id="look-tone-label" style="font-size:11px;color:var(--muted);margin-bottom:14px;">Select your skin tone above</p>
+
+        <span class="ai-label">Occasion</span>
+        <div class="ai-chips" id="look-occ" style="margin-bottom:14px;">
+          <button class="ai-chip" onclick="selChip(this,'look-occ')">Bridal</button>
+          <button class="ai-chip" onclick="selChip(this,'look-occ')">Party</button>
+          <button class="ai-chip" onclick="selChip(this,'look-occ')">Mehendi</button>
+          <button class="ai-chip" onclick="selChip(this,'look-occ')">Photoshoot</button>
+          <button class="ai-chip" onclick="selChip(this,'look-occ')">Everyday</button>
+          <button class="ai-chip" onclick="selChip(this,'look-occ')">Festival</button>
+        </div>
+        <button class="ai-btn" onclick="goLookStep(2)">Next - Choose a look</button>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="look-pane" id="lpane-2">
+        <span class="ai-label">Filter by culture / region</span>
+        <div class="region-tabs" id="region-tabs">
+          <button class="rtab on" onclick="filterLooks('all',this)">All</button>
+          <button class="rtab" onclick="filterLooks('punjabi',this)">Punjabi</button>
+          <button class="rtab" onclick="filterLooks('bengali',this)">Bengali</button>
+          <button class="rtab" onclick="filterLooks('south',this)">South Indian</button>
+          <button class="rtab" onclick="filterLooks('rajasthani',this)">Rajasthani</button>
+          <button class="rtab" onclick="filterLooks('west',this)">West Indian</button>
+          <button class="rtab" onclick="filterLooks('modern',this)">Modern</button>
+          <button class="rtab" onclick="filterLooks('western',this)">Western</button>
+          <button class="rtab" onclick="filterLooks('arabic',this)">Arabic</button>
+          <button class="rtab" onclick="filterLooks('kpop',this)">K-Beauty</button>
+        </div>
+        <span class="ai-label" style="margin-top:10px;display:block;">Tap any look to select it</span>
+        <div class="look-gallery" id="look-gallery"></div>
+        <div style="display:flex;gap:10px;margin-top:12px;">
+          <button class="ai-btn-outline" onclick="goLookStep(1)" style="flex:1">Back</button>
+          <button class="ai-btn" onclick="runLookAI()" style="flex:2" id="analyse-btn">Generate my look</button>
+        </div>
+        <div class="ai-typing" id="look-typing" style="margin-top:12px;display:none;"><span></span><span></span><span></span><span style="font-size:12px;color:var(--muted);margin-left:8px;">AI is generating your look...</span></div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="look-pane" id="lpane-3">
+        <div id="look-ai-result" style="display:none;">
+          <div class="look-result-header">
+            <img id="look-result-img" class="look-result-img" src="">
+            <div>
+              <div class="look-result-title" id="look-result-title"></div>
+              <div class="look-result-sub" id="look-result-sub"></div>
+            </div>
+          </div>
+          <div class="look-why" id="look-why-text"></div>
+          <span class="ai-label">Best GlowMe artists for this look</span>
+          <div class="look-artist-rec" id="look-artist-recs"></div>
+          <button class="ai-btn-outline" onclick="goLookStep(2)" style="width:100%;margin-top:12px;">Try a different look</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ══════════════════════════
+     AI MODAL 3: BOOKING CONFIRMATION
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-confirm" onclick="closeAI('confirm',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI Booking Message</div><div class="ai-msub">✦ What you receive after booking</div></div>
+      <button class="ai-mclose" onclick="closeAI('confirm')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">Select a service to see your prep guide</span>
+      <div class="ai-chips" id="conf-svc">
+        <button class="ai-chip" onclick="selChip(this,'conf-svc')">Bridal makeup</button>
+        <button class="ai-chip" onclick="selChip(this,'conf-svc')">Party glam</button>
+        <button class="ai-chip" onclick="selChip(this,'conf-svc')">Nail extensions</button>
+        <button class="ai-chip" onclick="selChip(this,'conf-svc')">HD airbrush</button>
+        <button class="ai-chip" onclick="selChip(this,'conf-svc')">Korean natural look</button>
+      </div>
+      <button class="ai-btn" onclick="runConfirmAI()">Generate my prep guide →</button>
+      <div class="ai-typing" id="conf-typing"><span></span><span></span><span></span></div>
+      <div class="ai-result" id="conf-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL 4: REVIEW SUMMARISER
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-review" onclick="closeAI('review',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI Review Summariser</div><div class="ai-msub">✦ What clients say, distilled by AI</div></div>
+      <button class="ai-mclose" onclick="closeAI('review')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">Choose an artist</span>
+      <select class="ai-select" id="rev-artist">
+        <option value="">Select artist</option>
+        <option>Priya Mehta — Chandigarh</option>
+        <option>Simran Kaur — Mohali</option>
+        <option>Anjali Sharma — Delhi</option>
+        <option>Neha Patel — Panchkula</option>
+        <option>Ritika Bose — Nail Artist</option>
+      </select>
+      <button class="ai-btn" onclick="runReviewAI()">Summarise reviews →</button>
+      <div class="ai-typing" id="rev-typing"><span></span><span></span><span></span></div>
+      <div class="ai-result" id="rev-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL 5: NO-SHOW PREDICTOR
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-noshow" onclick="closeAI('noshow',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI No-Show Predictor</div><div class="ai-msub">✦ For artists — protect your time</div></div>
+      <button class="ai-mclose" onclick="closeAI('noshow')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">When is the booking?</span>
+      <div class="ai-chips" id="ns-time">
+        <button class="ai-chip" onclick="selChip(this,'ns-time')">Same day</button>
+        <button class="ai-chip" onclick="selChip(this,'ns-time')">Tomorrow</button>
+        <button class="ai-chip" onclick="selChip(this,'ns-time')">2-3 days away</button>
+        <button class="ai-chip" onclick="selChip(this,'ns-time')">1 week away</button>
+        <button class="ai-chip" onclick="selChip(this,'ns-time')">2+ weeks away</button>
+      </div>
+      <span class="ai-label">Did the client pay a deposit?</span>
+      <div class="ai-chips" id="ns-dep">
+        <button class="ai-chip" onclick="selChip(this,'ns-dep')">Yes — deposit paid</button>
+        <button class="ai-chip" onclick="selChip(this,'ns-dep')">No — pending</button>
+      </div>
+      <span class="ai-label">Client history?</span>
+      <div class="ai-chips" id="ns-hist">
+        <button class="ai-chip" onclick="selChip(this,'ns-hist')">New client</button>
+        <button class="ai-chip" onclick="selChip(this,'ns-hist')">Booked before</button>
+        <button class="ai-chip" onclick="selChip(this,'ns-hist')">Regular client</button>
+      </div>
+      <button class="ai-btn" onclick="runNoshowAI()">Predict no-show risk →</button>
+      <div class="ai-typing" id="ns-typing"><span></span><span></span><span></span></div>
+      <div class="ai-result" id="ns-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL 6: STYLE PROFILE
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-profile" onclick="closeAI('profile',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI Style Profile</div><div class="ai-msub">✦ Your personalised beauty feed</div></div>
+      <button class="ai-mclose" onclick="closeAI('profile')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">What looks do you gravitate towards?</span>
+      <div class="ai-chips" id="sp-looks">
+        <button class="ai-chip" onclick="selChipMulti(this)">Dewy skin</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">Bold eyes</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">Nude lips</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">Full glam</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">Natural brows</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">Contouring</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">Highlighted</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">Korean style</button>
+      </div>
+      <span class="ai-label">How often do you book beauty services?</span>
+      <div class="ai-chips" id="sp-freq">
+        <button class="ai-chip" onclick="selChip(this,'sp-freq')">Special occasions only</button>
+        <button class="ai-chip" onclick="selChip(this,'sp-freq')">Monthly</button>
+        <button class="ai-chip" onclick="selChip(this,'sp-freq')">Fortnightly</button>
+        <button class="ai-chip" onclick="selChip(this,'sp-freq')">Weekly</button>
+      </div>
+      <button class="ai-btn" onclick="runProfileAI()">Build my style profile →</button>
+      <div class="ai-typing" id="sp-typing"><span></span><span></span><span></span></div>
+      <div class="ai-result" id="sp-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL 7: SMART PRICING
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-pricing" onclick="closeAI('pricing',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI Smart Pricing</div><div class="ai-msub">✦ For artists — real-time market rates</div></div>
+      <button class="ai-mclose" onclick="closeAI('pricing')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">Your city</span>
+      <select class="ai-select" id="pr-city">
+        <option value="">Select city</option>
+        <option>Chandigarh</option><option>Mohali</option><option>Panchkula</option><option>Delhi</option>
+      </select>
+      <span class="ai-label">Your service</span>
+      <select class="ai-select" id="pr-svc">
+        <option value="">Select service</option>
+        <option>Bridal makeup</option><option>Party makeup</option><option>HD airbrush</option>
+        <option>Natural/Korean look</option><option>Nail extensions</option><option>Nail art</option>
+      </select>
+      <span class="ai-label">Your current price (₹)</span>
+      <input class="ai-input" type="number" id="pr-price" placeholder="e.g. 3500">
+      <button class="ai-btn" onclick="runPricingAI()">Get AI pricing insight →</button>
+      <div class="ai-typing" id="pr-typing"><span></span><span></span><span></span></div>
+      <div class="ai-result" id="pr-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL 8: BRIDAL PLANNER
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-bridal" onclick="closeAI('bridal',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI Bridal Beauty Planner</div><div class="ai-msub">✦ Your complete wedding beauty timeline</div></div>
+      <button class="ai-mclose" onclick="closeAI('bridal')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">Your wedding date</span>
+      <input class="ai-input" type="date" id="br-date">
+      <span class="ai-label">Your city</span>
+      <select class="ai-select" id="br-city">
+        <option value="">Select city</option>
+        <option>Chandigarh</option><option>Mohali</option><option>Panchkula</option><option>Delhi</option>
+      </select>
+      <span class="ai-label">Events to plan for?</span>
+      <div class="ai-chips" id="br-events">
+        <button class="ai-chip sel" onclick="selChipMulti(this)">💍 Wedding day</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">🌸 Mehendi</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">🎊 Sangeet</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">📸 Engagement</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">🥂 Reception</button>
+        <button class="ai-chip" onclick="selChipMulti(this)">👗 Pre-bridal trials</button>
+      </div>
+      <button class="ai-btn" onclick="runBridalAI()">Build my bridal timeline →</button>
+      <div class="ai-typing" id="br-typing"><span></span><span></span><span></span></div>
+      <div class="ai-result" id="br-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL 9: VOICE BOOKING
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-voice" onclick="closeAI('voice',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">Hindi Voice Booking</div><div class="ai-msub">✦ Bol ke book karo</div></div>
+      <button class="ai-mclose" onclick="closeAI('voice')">✕</button>
+    </div>
+    <div class="ai-mbody" style="text-align:center;">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:8px;text-align:left;">Microphone pe click karo aur Hindi ya English mein bolo. AI samjhega aur booking karwayega.</p>
+      <div class="voice-ring" id="voiceBtn" onclick="toggleVoice()">
+        <span class="mic-icon">🎤</span>
+      </div>
+      <p id="voice-status" style="font-size:12px;color:var(--muted);margin-bottom:16px;">Click to start speaking</p>
+      <div style="text-align:left;">
+        <span class="ai-label">Try saying:</span>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-family:var(--dp);font-style:italic;font-size:13px;color:rgba(245,240,232,0.6);">"Bridal makeup book karna hai Chandigarh mein"</div>
+          <div style="font-family:var(--dp);font-style:italic;font-size:13px;color:rgba(245,240,232,0.6);">"I want nail extensions in Mohali this Saturday"</div>
+          <div style="font-family:var(--dp);font-style:italic;font-size:13px;color:rgba(245,240,232,0.6);">"Party makeup kal ke liye chahiye"</div>
+        </div>
+      </div>
+      <div class="ai-result" id="voice-result" style="text-align:left;margin-top:14px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL 10: SKIN TONE MATCH
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-skin" onclick="closeAI('skin',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI Skin Tone Match</div><div class="ai-msub">✦ Find your perfect artist match</div></div>
+      <button class="ai-mclose" onclick="closeAI('skin')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <span class="ai-label">Select your skin tone</span>
+      <div class="tone-grid">
+        <div class="tone-swatch" style="background:#FDDBB4" onclick="selTone(this,'fair')" title="Fair"></div>
+        <div class="tone-swatch" style="background:#F2C18D" onclick="selTone(this,'light')" title="Light"></div>
+        <div class="tone-swatch" style="background:#E0A07A" onclick="selTone(this,'medium')" title="Medium"></div>
+        <div class="tone-swatch" style="background:#C47E55" onclick="selTone(this,'tan')" title="Tan"></div>
+        <div class="tone-swatch" style="background:#8D5524" onclick="selTone(this,'deep')" title="Deep"></div>
+        <div class="tone-swatch" style="background:#4A2912" onclick="selTone(this,'rich')" title="Rich"></div>
+      </div>
+      <p id="tone-sel-label" style="font-size:11px;color:var(--muted);margin-bottom:14px;">No tone selected</p>
+      <span class="ai-label">Upload a selfie (optional — for better matching)</span>
+      <div class="upload-zone" onclick="document.getElementById('skin-upload').click()">
+        <img id="skin-preview" class="upload-preview">
+        <p id="skin-upload-txt" style="font-size:13px;color:var(--muted);">Click to upload selfie</p>
+        <p style="font-size:11px;color:rgba(138,125,112,0.5);margin-top:4px;">Your photo stays private and is never stored</p>
+      </div>
+      <input type="file" id="skin-upload" accept="image/*" style="display:none" onchange="previewSkin(this)">
+      <span class="ai-label">What service?</span>
+      <select class="ai-select" id="skin-svc">
+        <option value="">Select service</option>
+        <option>Bridal makeup</option><option>Party makeup</option><option>Natural/Korean look</option>
+        <option>HD airbrush</option><option>Editorial</option>
+      </select>
+      <button class="ai-btn" onclick="runSkinAI()">Match me with an artist →</button>
+      <div class="ai-typing" id="skin-typing"><span></span><span></span><span></span></div>
+      <div class="ai-result" id="skin-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     AI MODAL: TREND REPORT (weekly)
+     ══════════════════════════ -->
+<div class="ai-modal-overlay" id="modal-trends" onclick="closeAI('trends',event)">
+  <div class="ai-modal">
+    <div class="ai-mhead">
+      <div><div class="ai-mtitle">AI Trend Report</div><div class="ai-msub">✦ What's trending this week in your city</div></div>
+      <button class="ai-mclose" onclick="closeAI('trends')">✕</button>
+    </div>
+    <div class="ai-mbody">
+      <select class="ai-select" id="tr-city" onchange="runTrendAI()">
+        <option value="">Select city to see trends</option>
+        <option>Chandigarh</option><option>Mohali</option><option>Panchkula</option><option>Delhi</option>
+      </select>
+      <div id="trend-result" style="display:none">
+        <span class="ai-label" style="margin-top:6px;display:block;">Top searches this week</span>
+        <div id="trend-list"></div>
+        <div class="ai-result show" id="trend-insight" style="margin-top:14px;"></div>
+      </div>
+    </div>
+  </div>
+</div>

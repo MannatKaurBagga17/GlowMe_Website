@@ -18,95 +18,103 @@ document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.
 const countObs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting&&!el.target.dataset.counted){el.target.dataset.counted='1';const target=parseInt(el.target.dataset.target);let start=0,dur=1400,startTime=null;const step=ts=>{if(!startTime)startTime=ts;const prog=Math.min((ts-startTime)/dur,1);const ease=1-Math.pow(1-prog,3);el.target.textContent=Math.floor(target*ease);if(prog<1)requestAnimationFrame(step);else el.target.textContent=target;};requestAnimationFrame(step);}});},{threshold:0.5});
 document.querySelectorAll('.stat-num[data-target]').forEach(el=>countObs.observe(el));
 function toggleSave(btn){btn.textContent=btn.textContent==='x'?'x':'x';btn.textContent=btn.innerHTML==='♡'?'♥':'♡';btn.style.background=btn.textContent==='♥'?'var(--gold)':'rgba(8,8,8,0.6)';btn.style.color=btn.textContent==='♥'?'var(--black)':'var(--gold)';}
-function bookIt(btn){btn.textContent='Booked';btn.style.background='var(--gold)';btn.style.color='var(--black)';setTimeout(()=>{btn.textContent='Book';btn.style.background='';btn.style.color='';},2000);}
+function bookIt(btn){var card=btn.closest('.artist-card, .nail-card');var name=(card&&card.querySelector('.artist-name, .nail-name'));var svc='Bridal';var tags=card&&card.querySelector('.artist-tags .atag');if(tags)svc=tags.textContent.trim()==='Party'?'Party Makeup':tags.textContent.trim()==='Natural'?'Natural Look':tags.textContent.trim();openCal((name?name.textContent.trim():'Artist'),svc);}
 let curM=new Date().getMonth(),curY=new Date().getFullYear(),selDay=null,selTime=null,selSvc=null,curArtist='';
 const svcs={'Bridal':['Bridal makeup','Full bridal package','Bridal trial','Reception look'],'Party Makeup':['Party makeup','Evening glam','Festival look'],'Nail Extensions':['Acrylic extensions','Gel extensions','Ombre nails'],'Nail Art':['3D nail art','Gel polish','Bridal nail package'],'Salon Service':['Bridal makeup','Facial','Hair styling','Nail extensions'],'Bridal Package':['Full bridal package','Pre-bridal facial','Engagement look'],'Nail Service':['Acrylic extensions','Gel extensions','Nail art'],'Skincare':['Gold facial','Cleanup','De-tan','Body polishing'],'Natural Look':['Natural glow','Korean look','Dewy skin']};
-function getStatus(d,m,y){const seed=(d*3+m*7+y)%10;const today=new Date();const dt=new Date(y,m,d);if(dt<today&&dt.toDateString()!==today.toDateString())return'past';if(seed===0||seed===5)return'booked';const future=new Date(today.getFullYear(),today.getMonth()+2,today.getDate());if(dt>future)return'advance';return'avail';}
-function getSlots(d){const s=d%4;const all=['9:00 AM','10:30 AM','12:00 PM','2:00 PM','3:30 PM','5:00 PM','6:30 PM','8:00 PM'];const taken=s===0?[1,4]:s===1?[0,2,5]:s===2?[3,6]:[1,3,7];return all.map((t,i)=>({time:t,taken:taken.includes(i)}));}
+function artistHours(name){const n=(name||'').charCodeAt(0)%3;if(n===0)return{start:9,end:18,label:'9 AM – 6 PM'};if(n===1)return{start:11,end:20,label:'11 AM – 8 PM'};return{start:7,end:16,label:'7 AM – 4 PM'};}
+function dayCapacity(d,m,y){const booked=(d+m+y+curArtist.length)%6;const remaining=Math.max(1,10-booked);return{capacity:10,booked,remaining,label:remaining<=3?'Limited Slots':'Available'};}
+function getStatus(d,m,y){const today=new Date();const dt=new Date(y,m,d);dt.setHours(23,59,59,999);if(dt<today)return'past';const cap=dayCapacity(d,m,y);return cap.remaining<=0?'booked':cap.remaining<=3?'limited':'avail';}
+function getSlots(){const h=artistHours(curArtist);const all=[];for(let hour=h.start;hour<h.end;hour++){const suffix=hour>=12?'PM':'AM';const hr=((hour+11)%12)+1;all.push(hr+':00 '+suffix);}return all.map(t=>({time:t,taken:false}));}
 function openCal(name,svcType){curArtist=name;selDay=null;selTime=null;selSvc=null;curM=new Date().getMonth();curY=new Date().getFullYear();document.getElementById('modalName').textContent=name;document.getElementById('modalSub').textContent=svcType+' Check availability';const pills=svcs[svcType]||svcs['Party Makeup'];document.getElementById('svcPills').innerHTML=pills.map(p=>'<button class="sp" onclick="selSvcBtn(this,\''+p+'\')">'+p+'</button>').join('');document.getElementById('timeSection').style.display='none';updateSum();renderCal();document.getElementById('calModal').classList.add('open');document.body.style.overflow='hidden';}
 function closeCal(){document.getElementById('calModal').classList.remove('open');document.body.style.overflow='';}
 function closeIfBg(e){if(e.target===document.getElementById('calModal'))closeCal();}
 function selSvcBtn(btn,name){document.querySelectorAll('.sp').forEach(p=>p.classList.remove('sel'));btn.classList.add('sel');selSvc=name;updateSum();}
 function chMonth(d){curM+=d;if(curM>11){curM=0;curY++;}if(curM<0){curM=11;curY--;}selDay=null;selTime=null;document.getElementById('timeSection').style.display='none';updateSum();renderCal();}
 function renderCal(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('calMonthName').textContent=months[curM]+' '+curY;const first=new Date(curY,curM,1).getDay();const days=new Date(curY,curM+1,0).getDate();const today=new Date();let html='';for(let i=0;i<first;i++)html+='<div class="cd empty"></div>';for(let d=1;d<=days;d++){const st=getStatus(d,curM,curY);const isToday=d===today.getDate()&&curM===today.getMonth()&&curY===today.getFullYear();const isSel=d===selDay;let cls='cd '+st;if(isToday)cls+=' today';if(isSel)cls='cd sel';const click=(st==='avail'||st==='advance')?'onclick="pickDay('+d+',\''+st+'\')"':'';html+='<div class="'+cls+'" '+click+'>'+d+'</div>';}document.getElementById('calGrid').innerHTML=html;}
-function pickDay(d,st){selDay=d;selTime=null;renderCal();const months=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('selDateLbl').textContent=d+' '+months[curM]+' '+curY;const slots=getSlots(d);document.getElementById('timeSlots').innerHTML=slots.map(s=>'<div class="ts'+(s.taken?' taken':'')+'" '+(s.taken?'':'onclick="pickTime(this,\''+s.time+'\')"')+'>'+s.time+(s.taken?'<br>Booked':'')+'</div>').join('');document.getElementById('timeSection').style.display='block';updateSum();}
+function pickDay(d,st){selDay=d;selTime=null;renderCal();const months=['January','February','March','April','May','June','July','August','September','October','November','December'];const cap=dayCapacity(d,curM,curY);const h=artistHours(curArtist);document.getElementById('selDateLbl').textContent=d+' '+months[curM]+' '+curY+' · '+cap.label+' · '+cap.remaining+' of '+cap.capacity+' daily seats left · '+h.label;const slots=getSlots(d);document.getElementById('timeSlots').innerHTML=slots.map(s=>'<button type="button" class="ts" onclick="pickTime(this,\''+s.time+'\')">'+s.time+'<span class="slot-meta">Available</span></button>').join('');document.getElementById('timeSection').style.display='block';updateSum();}
 function pickTime(el,t){document.querySelectorAll('.ts').forEach(s=>s.classList.remove('tsel'));el.classList.add('tsel');selTime=t;updateSum();}
 function updateSum(){const months=['January','February','March','April','May','June','July','August','September','October','November','December'];const s=document.getElementById('bookSum');if(!selSvc&&!selDay){s.innerHTML='Select a service and date to continue.';return;}const price=Math.max(2000,(selSvc||'').length*180);const dep=Math.round(price*0.5/100)*100;s.innerHTML='<strong>Artist</strong> '+curArtist+'<br><strong>Service</strong> '+(selSvc||'Not selected')+'<br><strong>Date</strong> '+(selDay?selDay+' '+months[curM]+' '+curY:'Not selected')+'<br><strong>Time</strong> '+(selTime||'Not selected')+'<br><strong>Total price</strong> Rs '+price.toLocaleString('en-IN')+'<br><strong>Deposit now 50%</strong> Rs '+dep.toLocaleString('en-IN');}
+const UPI_VPA='glowme@upi';
 function confirmBook(){
-  if(!selSvc||!selDay||!selTime){alert('Please select a service, date, and time slot.');return;}
-  if(typeof Razorpay==='undefined'){showToast('Payment gateway load ho raha hai, ek second ruko...','error');return;}
-  const btn=document.querySelector('.confirm-btn');
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const dateStr=selDay+' '+months[curM]+' '+curY;
-  const origText=btn.textContent;
-  btn.disabled=true;
-  btn.textContent='Creating order...';
-  fetch('/api/orders',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({artist:curArtist,service:selSvc,date:dateStr,time:selTime})
-  }).then(r=>r.json().then(d=>({ok:r.ok,data:d}))).then(({ok,data})=>{
-    if(!ok)throw new Error(data.error||'Could not create order');
-    btn.textContent='Opening payment...';
-    const dep=data.depositInr;
-    const rzp=new Razorpay({
-      key:data.keyId,
-      order_id:data.orderId,
-      amount:data.amount,
-      currency:data.currency,
-      name:'GlowMe',
-      description:selSvc+' · '+curArtist+' · '+selDay+' '+months[curM],
-      handler:function(response){
-        btn.textContent='Verifying payment...';
-        fetch('/api/payments/verify',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            razorpay_order_id:response.razorpay_order_id,
-            razorpay_payment_id:response.razorpay_payment_id,
-            razorpay_signature:response.razorpay_signature
-          })
-        }).then(r=>r.json().then(d=>({ok:r.ok,data:d}))).then(({ok,data})=>{
-          if(!ok||!data.ok)throw new Error(data.error||'Payment verification failed');
-          btn.textContent='✓ Payment received! Booking confirmed.';
-          btn.style.background='#2D6A4F';
-          btn.style.color='#fff';
-          const ownerMsg='🌸 *New GlowMe Booking!*\n\n👤 Artist: '+curArtist+'\n💄 Service: '+selSvc+'\n📅 Date: '+dateStr+'\n⏰ Time: '+selTime+'\n💳 Deposit: ₹'+dep.toLocaleString('en-IN')+'\n🆔 Payment ID: '+response.razorpay_payment_id;
-          setTimeout(function(){
-            window.open('https://wa.me/'+CONFIG.OWNER_WHATSAPP+'?text='+encodeURIComponent(ownerMsg),'_blank');
-            showToast('✓ Booking confirmed! WhatsApp confirmation check karo.');
-            closeCal();
-            btn.textContent=origText;
-            btn.style.background='';
-            btn.style.color='';
-            btn.disabled=false;
-          },1200);
-        }).catch(function(err){
-          showToast(err.message||'Verification failed','error');
-          btn.textContent=origText;
-          btn.disabled=false;
-        });
-      },
-      prefill:{name:'',email:'',contact:''},
-      theme:{color:'#C9A96E'},
-      modal:{ondismiss:function(){
-        showToast('Payment cancel hua. Slot 10 min ke liye hold hai.','error');
-        btn.textContent=origText;
-        btn.disabled=false;
-      }}
-    });
-    rzp.on('payment.failed',function(){
-      showToast('Payment failed. Please try again.','error');
-      btn.textContent=origText;
-      btn.disabled=false;
-    });
-    rzp.open();
-  }).catch(function(err){
-    showToast(err.message||'Could not start payment','error');
-    btn.textContent=origText;
-    btn.disabled=false;
+  if(!selSvc||!selDay||!selTime){showToast('Please select a service, date, and time slot.','error');return;}
+  // Step 1: mandatory service mode
+  openServiceMode(function(mode,address){
+    openUpiPay(mode,address);
   });
 }
+function openServiceMode(onDone){
+  closeUpiOverlay();
+  const wrap=document.createElement('div');
+  wrap.className='modal-overlay';wrap.id='gmModeOv';wrap.style.display='flex';wrap.style.zIndex='99999';
+  wrap.innerHTML='<div class="modal" style="max-width:520px"><div class="modal-head"><div><div class="modal-artist-name">Choose service mode</div><div class="modal-artist-sub">Required — Step 1 of 2</div></div><button class="modal-close" type="button" data-x>x</button></div><div class="modal-body" style="display:grid;gap:12px"><button type="button" class="ts" data-mode="home" style="text-align:left;padding:14px"><strong>🏠 Home / Venue Service</strong><br><span class="slot-meta">Artist comes to you · address required</span></button><button type="button" class="ts" data-mode="studio" style="text-align:left;padding:14px"><strong>🏢 Artist Studio Service</strong><br><span class="slot-meta">Visit '+curArtist+'\'s studio in Chandigarh</span></button><div data-addr style="display:none"><label style="font-size:12px;color:#888">Full address (mandatory for home service)</label><textarea id="gmAddr" rows="2" style="width:100%;padding:10px;border:1px solid #333;background:#0a0a0a;color:#fff;border-radius:8px" placeholder="House, street, area, city, pincode"></textarea></div><button type="button" id="gmModeNext" class="confirm-btn" disabled style="opacity:.5">Continue →</button></div></div>';
+  document.body.appendChild(wrap);
+  let mode=null;
+  const next=wrap.querySelector('#gmModeNext');
+  const addrBox=wrap.querySelector('[data-addr]');
+  wrap.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
+    mode=b.dataset.mode;
+    wrap.querySelectorAll('[data-mode]').forEach(x=>x.classList.remove('tsel'));
+    b.classList.add('tsel');
+    addrBox.style.display=mode==='home'?'block':'none';
+    validate();
+  }));
+  const addr=wrap.querySelector('#gmAddr');
+  addr.addEventListener('input',validate);
+  function validate(){
+    const ok=mode==='studio'||(mode==='home'&&addr.value.trim().length>8);
+    next.disabled=!ok;next.style.opacity=ok?'1':'.5';
+  }
+  next.addEventListener('click',()=>{
+    const a=mode==='home'?addr.value.trim():'Studio: '+curArtist+' · Sector 17, Chandigarh';
+    wrap.remove();
+    onDone(mode,a);
+  });
+  wrap.querySelector('[data-x]').addEventListener('click',()=>wrap.remove());
+}
+function closeUpiOverlay(){const e=document.getElementById('gmUpiOv');if(e)e.remove();}
+function openUpiPay(mode,address){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const dateStr=selDay+' '+months[curM]+' '+curY;
+  const price=Math.max(2000,(selSvc||'').length*180);
+  let plan='deposit';
+  function amount(){return plan==='full'?price:Math.round(price*0.5/100)*100;}
+  const tn='GlowMe-'+(curArtist||'').replace(/\s+/g,'')+'-'+selDay+months[curM].slice(0,3);
+  function upiLink(app){
+    const amt=(amount()).toFixed(2);
+    const base='pa='+encodeURIComponent(UPI_VPA)+'&pn=GlowMe&am='+amt+'&cu=INR&tn='+encodeURIComponent(tn);
+    if(app==='gpay')return 'tez://upi/pay?'+base;
+    if(app==='phonepe')return 'phonepe://pay?'+base;
+    if(app==='paytm')return 'paytmmp://pay?'+base;
+    return 'upi://pay?'+base;
+  }
+  function qrUrl(){
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='+encodeURIComponent(upiLink('any'));
+  }
+  const wrap=document.createElement('div');
+  wrap.className='modal-overlay';wrap.id='gmUpiOv';wrap.style.display='flex';wrap.style.zIndex='99999';
+  function html(){
+    return '<div class="modal" style="max-width:560px"><div class="modal-head"><div><div class="modal-artist-name">Secure UPI payment</div><div class="modal-artist-sub">Step 2 of 2 · Pay to confirm</div></div><button class="modal-close" type="button" data-x>x</button></div><div class="modal-body"><div style="background:#0d0d0d;border:1px solid #2a2a2a;border-radius:10px;padding:12px;font-size:13px;color:#ccc;margin-bottom:14px"><strong style="color:#C9A96E">'+selSvc+'</strong> with '+curArtist+'<br>'+dateStr+' · '+selTime+'<br>'+(mode==='home'?'🏠 At your venue':'🏢 Studio')+'<br><span style="font-size:11px;color:#888">'+address+'</span></div><div style="display:flex;gap:8px;margin-bottom:14px"><button type="button" data-plan="deposit" class="ts '+(plan==='deposit'?'tsel':'')+'" style="flex:1">50% deposit<br><span class="slot-meta">₹'+(Math.round(price*0.5/100)*100).toLocaleString("en-IN")+'</span></button><button type="button" data-plan="full" class="ts '+(plan==='full'?'tsel':'')+'" style="flex:1">Full payment<br><span class="slot-meta">₹'+price.toLocaleString("en-IN")+'</span></button></div><div style="display:grid;grid-template-columns:1fr 240px;gap:18px;align-items:start"><div><div style="font-size:12px;color:#888;margin-bottom:8px">Pay with UPI app</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><a href="'+upiLink('gpay')+'" class="ts" style="text-align:center">🟢 GPay</a><a href="'+upiLink('phonepe')+'" class="ts" style="text-align:center">🟣 PhonePe</a><a href="'+upiLink('paytm')+'" class="ts" style="text-align:center">🔵 Paytm</a><a href="'+upiLink('any')+'" class="ts" style="text-align:center">Other UPI</a></div><div style="margin-top:14px;font-size:12px;color:#888">Or pay to VPA</div><div style="display:flex;gap:6px;margin-top:4px"><input readonly value="'+UPI_VPA+'" style="flex:1;padding:8px;border:1px solid #333;background:#0a0a0a;color:#C9A96E;border-radius:6px;font-family:monospace"><button type="button" data-copy class="cal-btn">Copy</button></div></div><div style="text-align:center"><div style="background:#fff;padding:8px;border-radius:8px;display:inline-block"><img src="'+qrUrl()+'" alt="UPI QR" style="display:block;width:220px;height:220px"></div><div style="font-size:11px;color:#888;margin-top:6px">Scan with any UPI app</div></div></div><div style="margin-top:18px;display:flex;gap:8px"><button type="button" data-paid class="confirm-btn" style="flex:1">✓ I have paid ₹'+amount().toLocaleString("en-IN")+'</button></div><div style="font-size:11px;color:#666;margin-top:8px;text-align:center">Booking is confirmed only after we verify the UPI transaction.</div></div></div>';
+  }
+  wrap.innerHTML=html();
+  document.body.appendChild(wrap);
+  function bind(){
+    wrap.querySelector('[data-x]').addEventListener('click',()=>wrap.remove());
+    wrap.querySelectorAll('[data-plan]').forEach(b=>b.addEventListener('click',()=>{plan=b.dataset.plan;wrap.innerHTML=html();bind();}));
+    const cp=wrap.querySelector('[data-copy]');
+    if(cp)cp.addEventListener('click',()=>{navigator.clipboard?.writeText(UPI_VPA);showToast('VPA copied');});
+    wrap.querySelector('[data-paid]').addEventListener('click',()=>{
+      const paid=amount();
+      const remaining=price-paid;
+      const ownerMsg='🌸 *New GlowMe Booking!*\n\n👤 Artist: '+curArtist+'\n💄 Service: '+selSvc+'\n📅 '+dateStr+' · '+selTime+'\n📍 '+(mode==='home'?'Home: ':'Studio: ')+address+'\n💳 Paid (UPI): ₹'+paid.toLocaleString('en-IN')+(remaining>0?'\n🧾 Balance after service: ₹'+remaining.toLocaleString('en-IN'):'\n✓ Paid in full');
+      wrap.remove();
+      closeCal();
+      showToast('✓ Booking confirmed! Opening WhatsApp...');
+      setTimeout(()=>window.open('https://wa.me/'+CONFIG.OWNER_WHATSAPP+'?text='+encodeURIComponent(ownerMsg),'_blank'),400);
+    });
+  }
+  bind();
+}
+
 let chatOpen=false,chatHist=[],isSend=false;
 function toggleChat(){chatOpen=!chatOpen;document.getElementById('chat-window').classList.toggle('open',chatOpen);if(chatOpen&&chatHist.length===0){setTimeout(()=>addAI('Welcome to GlowMe. I am your personal beauty concierge here to help you find the perfect artist, check availability, or answer any questions. How may I assist you today?'),400);}if(chatOpen)setTimeout(()=>document.getElementById('chat-input').focus(),350);}
 function qa(t){document.getElementById('chat-input').value=t;sendMsg();}
@@ -548,25 +556,27 @@ function glowmeRenderUser(a){
   return wrap;
 }
 function glowmeRenderLogin(mount){
-  mount.innerHTML='<a class="nav-auth-login" href="/api/auth/google">Artist Login</a>';
+  mount.innerHTML='<a class="nav-auth-login" href="/auth?redirect=/dashboard">Artist Login</a>';
 }
 async function glowmeInitAuth(){
   const mount=document.getElementById('navAuth');
   if(!mount)return;
   try{
-    const res=await fetch('/api/auth/me',{headers:{'Accept':'application/json'}});
-    const data=await res.json();
+    const sb=window.supabase||(await import('/src/integrations/supabase/client.ts')).supabase;
+    const { data } = await sb.auth.getSession();
     mount.innerHTML='';
-    if(data.artist)mount.appendChild(glowmeRenderUser(data.artist));
-    else glowmeRenderLogin(mount);
+    if(data&&data.session){
+      const wrap=document.createElement('div');wrap.className='nav-auth';
+      const dash=document.createElement('a');dash.className='nav-auth-manage';dash.textContent='Dashboard';dash.href='/dashboard';
+      const out=document.createElement('button');out.className='nav-auth-logout';out.textContent='Logout';
+      out.addEventListener('click',async()=>{await sb.auth.signOut();glowmeInitAuth();});
+      wrap.appendChild(dash);wrap.appendChild(out);mount.appendChild(wrap);
+    } else {
+      glowmeRenderLogin(mount);
+    }
   }catch{
     glowmeRenderLogin(mount);
   }
-}
-async function glowmeLogout(){
-  try{await fetch('/api/auth/logout',{method:'POST'});}catch{}
-  if(typeof showToast==='function')showToast('Logged out.');
-  glowmeInitAuth();
 }
 (function(){
   // One-time toast after the OAuth redirect, then strip ?auth from the URL.
@@ -742,6 +752,8 @@ function glowmeDetectCity(){
 async function glowmeLoadListings(){
   try{
     const res=await fetch('/api/listings');
+    const contentType=res.headers.get('content-type')||'';
+    if(!res.ok||!contentType.includes('application/json'))throw new Error('Listings API unavailable');
     const data=await res.json();
     glowmeAllListings=data.listings||[];
     glowmeCities=data.cities||[];

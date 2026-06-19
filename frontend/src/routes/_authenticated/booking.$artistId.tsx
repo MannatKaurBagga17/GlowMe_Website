@@ -47,6 +47,7 @@ function BookingPage() {
 
   const [step, setStep] = useState<1 | 2>(1); // 1 = details, 2 = payment
   const [slotId, setSlotId] = useState<string>("");
+  const [selectedDay, setSelectedDay] = useState<string>("");
   const [locationType, setLocationType] = useState<"studio" | "at_home">(mode ?? "studio");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
@@ -69,13 +70,14 @@ function BookingPage() {
   const slotsByDay = useMemo(() => {
     const map = new Map<string, typeof slotData.slots>();
     for (const s of slotData.slots) {
-      if (!(s as any).available) continue;
-      const d = new Date(s.starts_at).toDateString();
+      const d = new Date(s.starts_at).toISOString().slice(0, 10);
       if (!map.has(d)) map.set(d, []);
       map.get(d)!.push(s);
     }
-    return Array.from(map.entries()).slice(0, 30);
+    return Array.from(map.entries()).slice(0, 45);
   }, [slotData.slots]);
+
+  const selectedDaySlots = useMemo(() => slotsByDay.find(([day]) => day === selectedDay)?.[1] ?? [], [selectedDay, slotsByDay]);
 
   const total = (artistQuery.data?.services ?? []).reduce((sum, s) => sum + Number(s.price_paise), 0);
   const advanceAmount = Math.round(total * 0.25);
@@ -174,32 +176,37 @@ function BookingPage() {
               <div className="mt-6 space-y-6">
                 {/* Date & slot */}
                 <section className="rounded-xl border border-border bg-card p-4">
-                  <h2 className="font-medium">Choose date & time</h2>
-                  <p className="mt-1 text-xs text-muted-foreground">All future dates with open seats are shown. Each slot supports up to 10 bookings.</p>
-                  <div className="mt-3 space-y-4 max-h-[420px] overflow-y-auto pr-2">
-                    {slotsByDay.length === 0 && <p className="text-sm text-muted-foreground">No availability in the next 60 days.</p>}
-                    {slotsByDay.map(([day, slots]) => (
-                      <div key={day}>
-                        <div className="text-sm font-medium text-muted-foreground">{formatDate(slots[0].starts_at)}</div>
-                        <div className="mt-1 flex flex-wrap gap-2">
-                          {slots.map((s) => {
-                            const rem = (s as any).remaining ?? 10;
-                            return (
-                              <button
-                                key={s.id}
-                                type="button"
-                                onClick={() => setSlotId(s.id)}
-                                className={`group rounded-md border px-3 py-1.5 text-sm transition ${slotId === s.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:bg-accent"}`}
-                                title={`${rem} seat${rem === 1 ? "" : "s"} remaining`}
-                              >
-                                {formatTime(s.starts_at)}
-                                <span className={`ml-1.5 text-[10px] ${slotId === s.id ? "text-primary-foreground/80" : "text-muted-foreground"}`}>· {rem} left</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
+                  <h2 className="font-medium">Choose date</h2>
+                  <p className="mt-1 text-xs text-muted-foreground">Every future date stays selectable until the artist reaches 10 bookings for that day.</p>
+                  <div className="mt-3 grid max-h-72 gap-2 overflow-y-auto pr-2 sm:grid-cols-2 lg:grid-cols-3">
+                    {slotsByDay.map(([day, slots]) => {
+                      const best = slots.reduce((max, s) => Math.max(max, Number((s as any).remaining ?? 0)), 0);
+                      const label = best <= 0 ? "Fully Booked" : best <= 3 ? "Limited Slots" : "Available";
+                      return (
+                        <button
+                          key={day}
+                          type="button"
+                          disabled={best <= 0}
+                          onClick={() => { setSelectedDay(day); setSlotId(""); }}
+                          className={`rounded-lg border p-3 text-left transition disabled:opacity-55 ${selectedDay === day ? "border-primary bg-primary text-primary-foreground" : "border-border hover:bg-accent"}`}
+                        >
+                          <span className="block text-sm font-medium">{formatDate(slots[0].starts_at)}</span>
+                          <span className={`mt-1 block text-xs ${selectedDay === day ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{label} · {best} seats left</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <h3 className="mt-5 text-sm font-medium">Choose time</h3>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {!selectedDay && <p className="text-sm text-muted-foreground">Select a date to see this artist's working-hour slots.</p>}
+                    {selectedDaySlots.filter((s) => (s as any).available).map((s) => {
+                      const rem = Number((s as any).remaining ?? 10);
+                      return (
+                        <button key={s.id} type="button" onClick={() => setSlotId(s.id)} className={`rounded-md border px-3 py-2 text-sm transition ${slotId === s.id ? "border-primary bg-primary text-primary-foreground" : "border-border hover:bg-accent"}`}>
+                          {formatTime(s.starts_at)} <span className={slotId === s.id ? "text-primary-foreground/80" : "text-muted-foreground"}>· {rem} left</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </section>
 
