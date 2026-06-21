@@ -9,18 +9,48 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ApplyArtistRouteImport } from './routes/apply-artist'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ArtistAuthRouteImport } from './routes/artist.auth'
 import { Route as ArtistSlugRouteImport } from './routes/artist.$slug'
-import { Route as AuthenticatedSupportRouteImport } from './routes/_authenticated/support'
-import { Route as AuthenticatedFavouritesRouteImport } from './routes/_authenticated/favourites'
-import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedCustomerRouteRouteImport } from './routes/_authenticated/_customer/route'
+import { Route as AuthenticatedArtistRouteRouteImport } from './routes/_authenticated/_artist/route'
 import { Route as ApiAuthMeRouteImport } from './routes/api/auth.me'
-import { Route as AuthenticatedBookingArtistIdRouteImport } from './routes/_authenticated/booking.$artistId'
-import { Route as AuthenticatedBookingIdConfirmRouteImport } from './routes/_authenticated/booking.$id.confirm'
+import { Route as AuthenticatedCustomerSupportRouteImport } from './routes/_authenticated/_customer/support'
+import { Route as AuthenticatedCustomerMeRouteImport } from './routes/_authenticated/_customer/me'
+import { Route as AuthenticatedCustomerFavouritesRouteImport } from './routes/_authenticated/_customer/favourites'
+import { Route as AuthenticatedCustomerAccountRouteImport } from './routes/_authenticated/_customer/account'
+import { Route as AuthenticatedArtistSettingsRouteImport } from './routes/_authenticated/_artist/settings'
+import { Route as AuthenticatedArtistServicesRouteImport } from './routes/_authenticated/_artist/services'
+import { Route as AuthenticatedArtistServiceAreasRouteImport } from './routes/_authenticated/_artist/service-areas'
+import { Route as AuthenticatedArtistReviewsRouteImport } from './routes/_authenticated/_artist/reviews'
+import { Route as AuthenticatedArtistProfileRouteImport } from './routes/_authenticated/_artist/profile'
+import { Route as AuthenticatedArtistPortfolioRouteImport } from './routes/_authenticated/_artist/portfolio'
+import { Route as AuthenticatedArtistNotificationsRouteImport } from './routes/_authenticated/_artist/notifications'
+import { Route as AuthenticatedArtistMessagesRouteImport } from './routes/_authenticated/_artist/messages'
+import { Route as AuthenticatedArtistEarningsRouteImport } from './routes/_authenticated/_artist/earnings'
+import { Route as AuthenticatedArtistDashboardRouteImport } from './routes/_authenticated/_artist/dashboard'
+import { Route as AuthenticatedArtistBookingsRouteImport } from './routes/_authenticated/_artist/bookings'
+import { Route as AuthenticatedArtistAvailabilityRouteImport } from './routes/_authenticated/_artist/availability'
+import { Route as AuthenticatedCustomerMeIndexRouteImport } from './routes/_authenticated/_customer/me.index'
+import { Route as AuthenticatedCustomerMeReviewsRouteImport } from './routes/_authenticated/_customer/me.reviews'
+import { Route as AuthenticatedCustomerMeProfileRouteImport } from './routes/_authenticated/_customer/me.profile'
+import { Route as AuthenticatedCustomerMePaymentsRouteImport } from './routes/_authenticated/_customer/me.payments'
+import { Route as AuthenticatedCustomerMeOffersRouteImport } from './routes/_authenticated/_customer/me.offers'
+import { Route as AuthenticatedCustomerMeNotificationsRouteImport } from './routes/_authenticated/_customer/me.notifications'
+import { Route as AuthenticatedCustomerMeNearMeRouteImport } from './routes/_authenticated/_customer/me.near-me'
+import { Route as AuthenticatedCustomerBookingArtistIdRouteImport } from './routes/_authenticated/_customer/booking.$artistId'
+import { Route as AuthenticatedCustomerBookingIdConfirmRouteImport } from './routes/_authenticated/_customer/booking.$id.confirm'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -29,6 +59,11 @@ const SearchRoute = SearchRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyArtistRoute = ApplyArtistRouteImport.update({
+  id: '/apply-artist',
+  path: '/apply-artist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -40,133 +75,420 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArtistAuthRoute = ArtistAuthRouteImport.update({
+  id: '/artist/auth',
+  path: '/artist/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArtistSlugRoute = ArtistSlugRouteImport.update({
   id: '/artist/$slug',
   path: '/artist/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSupportRoute = AuthenticatedSupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedFavouritesRoute = AuthenticatedFavouritesRouteImport.update({
-  id: '/favourites',
-  path: '/favourites',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedCustomerRouteRoute =
+  AuthenticatedCustomerRouteRouteImport.update({
+    id: '/_customer',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedArtistRouteRoute =
+  AuthenticatedArtistRouteRouteImport.update({
+    id: '/_artist',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
   id: '/api/auth/me',
   path: '/api/auth/me',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedBookingArtistIdRoute =
-  AuthenticatedBookingArtistIdRouteImport.update({
+const AuthenticatedCustomerSupportRoute =
+  AuthenticatedCustomerSupportRouteImport.update({
+    id: '/support',
+    path: '/support',
+    getParentRoute: () => AuthenticatedCustomerRouteRoute,
+  } as any)
+const AuthenticatedCustomerMeRoute = AuthenticatedCustomerMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => AuthenticatedCustomerRouteRoute,
+} as any)
+const AuthenticatedCustomerFavouritesRoute =
+  AuthenticatedCustomerFavouritesRouteImport.update({
+    id: '/favourites',
+    path: '/favourites',
+    getParentRoute: () => AuthenticatedCustomerRouteRoute,
+  } as any)
+const AuthenticatedCustomerAccountRoute =
+  AuthenticatedCustomerAccountRouteImport.update({
+    id: '/account',
+    path: '/account',
+    getParentRoute: () => AuthenticatedCustomerRouteRoute,
+  } as any)
+const AuthenticatedArtistSettingsRoute =
+  AuthenticatedArtistSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistServicesRoute =
+  AuthenticatedArtistServicesRouteImport.update({
+    id: '/services',
+    path: '/services',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistServiceAreasRoute =
+  AuthenticatedArtistServiceAreasRouteImport.update({
+    id: '/service-areas',
+    path: '/service-areas',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistReviewsRoute =
+  AuthenticatedArtistReviewsRouteImport.update({
+    id: '/reviews',
+    path: '/reviews',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistProfileRoute =
+  AuthenticatedArtistProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistPortfolioRoute =
+  AuthenticatedArtistPortfolioRouteImport.update({
+    id: '/portfolio',
+    path: '/portfolio',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistNotificationsRoute =
+  AuthenticatedArtistNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistMessagesRoute =
+  AuthenticatedArtistMessagesRouteImport.update({
+    id: '/messages',
+    path: '/messages',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistEarningsRoute =
+  AuthenticatedArtistEarningsRouteImport.update({
+    id: '/earnings',
+    path: '/earnings',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistDashboardRoute =
+  AuthenticatedArtistDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistBookingsRoute =
+  AuthenticatedArtistBookingsRouteImport.update({
+    id: '/bookings',
+    path: '/bookings',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedArtistAvailabilityRoute =
+  AuthenticatedArtistAvailabilityRouteImport.update({
+    id: '/availability',
+    path: '/availability',
+    getParentRoute: () => AuthenticatedArtistRouteRoute,
+  } as any)
+const AuthenticatedCustomerMeIndexRoute =
+  AuthenticatedCustomerMeIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCustomerMeRoute,
+  } as any)
+const AuthenticatedCustomerMeReviewsRoute =
+  AuthenticatedCustomerMeReviewsRouteImport.update({
+    id: '/reviews',
+    path: '/reviews',
+    getParentRoute: () => AuthenticatedCustomerMeRoute,
+  } as any)
+const AuthenticatedCustomerMeProfileRoute =
+  AuthenticatedCustomerMeProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedCustomerMeRoute,
+  } as any)
+const AuthenticatedCustomerMePaymentsRoute =
+  AuthenticatedCustomerMePaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AuthenticatedCustomerMeRoute,
+  } as any)
+const AuthenticatedCustomerMeOffersRoute =
+  AuthenticatedCustomerMeOffersRouteImport.update({
+    id: '/offers',
+    path: '/offers',
+    getParentRoute: () => AuthenticatedCustomerMeRoute,
+  } as any)
+const AuthenticatedCustomerMeNotificationsRoute =
+  AuthenticatedCustomerMeNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedCustomerMeRoute,
+  } as any)
+const AuthenticatedCustomerMeNearMeRoute =
+  AuthenticatedCustomerMeNearMeRouteImport.update({
+    id: '/near-me',
+    path: '/near-me',
+    getParentRoute: () => AuthenticatedCustomerMeRoute,
+  } as any)
+const AuthenticatedCustomerBookingArtistIdRoute =
+  AuthenticatedCustomerBookingArtistIdRouteImport.update({
     id: '/booking/$artistId',
     path: '/booking/$artistId',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedCustomerRouteRoute,
   } as any)
-const AuthenticatedBookingIdConfirmRoute =
-  AuthenticatedBookingIdConfirmRouteImport.update({
+const AuthenticatedCustomerBookingIdConfirmRoute =
+  AuthenticatedCustomerBookingIdConfirmRouteImport.update({
     id: '/booking/$id/confirm',
     path: '/booking/$id/confirm',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    getParentRoute: () => AuthenticatedCustomerRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/apply-artist': typeof ApplyArtistRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
-  '/account': typeof AuthenticatedAccountRoute
-  '/favourites': typeof AuthenticatedFavouritesRoute
-  '/support': typeof AuthenticatedSupportRoute
+  '/welcome': typeof WelcomeRoute
   '/artist/$slug': typeof ArtistSlugRoute
-  '/booking/$artistId': typeof AuthenticatedBookingArtistIdRoute
+  '/artist/auth': typeof ArtistAuthRoute
+  '/availability': typeof AuthenticatedArtistAvailabilityRoute
+  '/bookings': typeof AuthenticatedArtistBookingsRoute
+  '/dashboard': typeof AuthenticatedArtistDashboardRoute
+  '/earnings': typeof AuthenticatedArtistEarningsRoute
+  '/messages': typeof AuthenticatedArtistMessagesRoute
+  '/notifications': typeof AuthenticatedArtistNotificationsRoute
+  '/portfolio': typeof AuthenticatedArtistPortfolioRoute
+  '/profile': typeof AuthenticatedArtistProfileRoute
+  '/reviews': typeof AuthenticatedArtistReviewsRoute
+  '/service-areas': typeof AuthenticatedArtistServiceAreasRoute
+  '/services': typeof AuthenticatedArtistServicesRoute
+  '/settings': typeof AuthenticatedArtistSettingsRoute
+  '/account': typeof AuthenticatedCustomerAccountRoute
+  '/favourites': typeof AuthenticatedCustomerFavouritesRoute
+  '/me': typeof AuthenticatedCustomerMeRouteWithChildren
+  '/support': typeof AuthenticatedCustomerSupportRoute
   '/api/auth/me': typeof ApiAuthMeRoute
-  '/booking/$id/confirm': typeof AuthenticatedBookingIdConfirmRoute
+  '/booking/$artistId': typeof AuthenticatedCustomerBookingArtistIdRoute
+  '/me/near-me': typeof AuthenticatedCustomerMeNearMeRoute
+  '/me/notifications': typeof AuthenticatedCustomerMeNotificationsRoute
+  '/me/offers': typeof AuthenticatedCustomerMeOffersRoute
+  '/me/payments': typeof AuthenticatedCustomerMePaymentsRoute
+  '/me/profile': typeof AuthenticatedCustomerMeProfileRoute
+  '/me/reviews': typeof AuthenticatedCustomerMeReviewsRoute
+  '/me/': typeof AuthenticatedCustomerMeIndexRoute
+  '/booking/$id/confirm': typeof AuthenticatedCustomerBookingIdConfirmRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/apply-artist': typeof ApplyArtistRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
-  '/account': typeof AuthenticatedAccountRoute
-  '/favourites': typeof AuthenticatedFavouritesRoute
-  '/support': typeof AuthenticatedSupportRoute
+  '/welcome': typeof WelcomeRoute
   '/artist/$slug': typeof ArtistSlugRoute
-  '/booking/$artistId': typeof AuthenticatedBookingArtistIdRoute
+  '/artist/auth': typeof ArtistAuthRoute
+  '/availability': typeof AuthenticatedArtistAvailabilityRoute
+  '/bookings': typeof AuthenticatedArtistBookingsRoute
+  '/dashboard': typeof AuthenticatedArtistDashboardRoute
+  '/earnings': typeof AuthenticatedArtistEarningsRoute
+  '/messages': typeof AuthenticatedArtistMessagesRoute
+  '/notifications': typeof AuthenticatedArtistNotificationsRoute
+  '/portfolio': typeof AuthenticatedArtistPortfolioRoute
+  '/profile': typeof AuthenticatedArtistProfileRoute
+  '/reviews': typeof AuthenticatedArtistReviewsRoute
+  '/service-areas': typeof AuthenticatedArtistServiceAreasRoute
+  '/services': typeof AuthenticatedArtistServicesRoute
+  '/settings': typeof AuthenticatedArtistSettingsRoute
+  '/account': typeof AuthenticatedCustomerAccountRoute
+  '/favourites': typeof AuthenticatedCustomerFavouritesRoute
+  '/support': typeof AuthenticatedCustomerSupportRoute
   '/api/auth/me': typeof ApiAuthMeRoute
-  '/booking/$id/confirm': typeof AuthenticatedBookingIdConfirmRoute
+  '/booking/$artistId': typeof AuthenticatedCustomerBookingArtistIdRoute
+  '/me/near-me': typeof AuthenticatedCustomerMeNearMeRoute
+  '/me/notifications': typeof AuthenticatedCustomerMeNotificationsRoute
+  '/me/offers': typeof AuthenticatedCustomerMeOffersRoute
+  '/me/payments': typeof AuthenticatedCustomerMePaymentsRoute
+  '/me/profile': typeof AuthenticatedCustomerMeProfileRoute
+  '/me/reviews': typeof AuthenticatedCustomerMeReviewsRoute
+  '/me': typeof AuthenticatedCustomerMeIndexRoute
+  '/booking/$id/confirm': typeof AuthenticatedCustomerBookingIdConfirmRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/apply-artist': typeof ApplyArtistRoute
   '/auth': typeof AuthRoute
   '/search': typeof SearchRoute
-  '/_authenticated/account': typeof AuthenticatedAccountRoute
-  '/_authenticated/favourites': typeof AuthenticatedFavouritesRoute
-  '/_authenticated/support': typeof AuthenticatedSupportRoute
+  '/welcome': typeof WelcomeRoute
+  '/_authenticated/_artist': typeof AuthenticatedArtistRouteRouteWithChildren
+  '/_authenticated/_customer': typeof AuthenticatedCustomerRouteRouteWithChildren
   '/artist/$slug': typeof ArtistSlugRoute
-  '/_authenticated/booking/$artistId': typeof AuthenticatedBookingArtistIdRoute
+  '/artist/auth': typeof ArtistAuthRoute
+  '/_authenticated/_artist/availability': typeof AuthenticatedArtistAvailabilityRoute
+  '/_authenticated/_artist/bookings': typeof AuthenticatedArtistBookingsRoute
+  '/_authenticated/_artist/dashboard': typeof AuthenticatedArtistDashboardRoute
+  '/_authenticated/_artist/earnings': typeof AuthenticatedArtistEarningsRoute
+  '/_authenticated/_artist/messages': typeof AuthenticatedArtistMessagesRoute
+  '/_authenticated/_artist/notifications': typeof AuthenticatedArtistNotificationsRoute
+  '/_authenticated/_artist/portfolio': typeof AuthenticatedArtistPortfolioRoute
+  '/_authenticated/_artist/profile': typeof AuthenticatedArtistProfileRoute
+  '/_authenticated/_artist/reviews': typeof AuthenticatedArtistReviewsRoute
+  '/_authenticated/_artist/service-areas': typeof AuthenticatedArtistServiceAreasRoute
+  '/_authenticated/_artist/services': typeof AuthenticatedArtistServicesRoute
+  '/_authenticated/_artist/settings': typeof AuthenticatedArtistSettingsRoute
+  '/_authenticated/_customer/account': typeof AuthenticatedCustomerAccountRoute
+  '/_authenticated/_customer/favourites': typeof AuthenticatedCustomerFavouritesRoute
+  '/_authenticated/_customer/me': typeof AuthenticatedCustomerMeRouteWithChildren
+  '/_authenticated/_customer/support': typeof AuthenticatedCustomerSupportRoute
   '/api/auth/me': typeof ApiAuthMeRoute
-  '/_authenticated/booking/$id/confirm': typeof AuthenticatedBookingIdConfirmRoute
+  '/_authenticated/_customer/booking/$artistId': typeof AuthenticatedCustomerBookingArtistIdRoute
+  '/_authenticated/_customer/me/near-me': typeof AuthenticatedCustomerMeNearMeRoute
+  '/_authenticated/_customer/me/notifications': typeof AuthenticatedCustomerMeNotificationsRoute
+  '/_authenticated/_customer/me/offers': typeof AuthenticatedCustomerMeOffersRoute
+  '/_authenticated/_customer/me/payments': typeof AuthenticatedCustomerMePaymentsRoute
+  '/_authenticated/_customer/me/profile': typeof AuthenticatedCustomerMeProfileRoute
+  '/_authenticated/_customer/me/reviews': typeof AuthenticatedCustomerMeReviewsRoute
+  '/_authenticated/_customer/me/': typeof AuthenticatedCustomerMeIndexRoute
+  '/_authenticated/_customer/booking/$id/confirm': typeof AuthenticatedCustomerBookingIdConfirmRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/apply-artist'
     | '/auth'
     | '/search'
+    | '/welcome'
+    | '/artist/$slug'
+    | '/artist/auth'
+    | '/availability'
+    | '/bookings'
+    | '/dashboard'
+    | '/earnings'
+    | '/messages'
+    | '/notifications'
+    | '/portfolio'
+    | '/profile'
+    | '/reviews'
+    | '/service-areas'
+    | '/services'
+    | '/settings'
     | '/account'
     | '/favourites'
+    | '/me'
     | '/support'
-    | '/artist/$slug'
-    | '/booking/$artistId'
     | '/api/auth/me'
+    | '/booking/$artistId'
+    | '/me/near-me'
+    | '/me/notifications'
+    | '/me/offers'
+    | '/me/payments'
+    | '/me/profile'
+    | '/me/reviews'
+    | '/me/'
     | '/booking/$id/confirm'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/apply-artist'
     | '/auth'
     | '/search'
+    | '/welcome'
+    | '/artist/$slug'
+    | '/artist/auth'
+    | '/availability'
+    | '/bookings'
+    | '/dashboard'
+    | '/earnings'
+    | '/messages'
+    | '/notifications'
+    | '/portfolio'
+    | '/profile'
+    | '/reviews'
+    | '/service-areas'
+    | '/services'
+    | '/settings'
     | '/account'
     | '/favourites'
     | '/support'
-    | '/artist/$slug'
-    | '/booking/$artistId'
     | '/api/auth/me'
+    | '/booking/$artistId'
+    | '/me/near-me'
+    | '/me/notifications'
+    | '/me/offers'
+    | '/me/payments'
+    | '/me/profile'
+    | '/me/reviews'
+    | '/me'
     | '/booking/$id/confirm'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/apply-artist'
     | '/auth'
     | '/search'
-    | '/_authenticated/account'
-    | '/_authenticated/favourites'
-    | '/_authenticated/support'
+    | '/welcome'
+    | '/_authenticated/_artist'
+    | '/_authenticated/_customer'
     | '/artist/$slug'
-    | '/_authenticated/booking/$artistId'
+    | '/artist/auth'
+    | '/_authenticated/_artist/availability'
+    | '/_authenticated/_artist/bookings'
+    | '/_authenticated/_artist/dashboard'
+    | '/_authenticated/_artist/earnings'
+    | '/_authenticated/_artist/messages'
+    | '/_authenticated/_artist/notifications'
+    | '/_authenticated/_artist/portfolio'
+    | '/_authenticated/_artist/profile'
+    | '/_authenticated/_artist/reviews'
+    | '/_authenticated/_artist/service-areas'
+    | '/_authenticated/_artist/services'
+    | '/_authenticated/_artist/settings'
+    | '/_authenticated/_customer/account'
+    | '/_authenticated/_customer/favourites'
+    | '/_authenticated/_customer/me'
+    | '/_authenticated/_customer/support'
     | '/api/auth/me'
-    | '/_authenticated/booking/$id/confirm'
+    | '/_authenticated/_customer/booking/$artistId'
+    | '/_authenticated/_customer/me/near-me'
+    | '/_authenticated/_customer/me/notifications'
+    | '/_authenticated/_customer/me/offers'
+    | '/_authenticated/_customer/me/payments'
+    | '/_authenticated/_customer/me/profile'
+    | '/_authenticated/_customer/me/reviews'
+    | '/_authenticated/_customer/me/'
+    | '/_authenticated/_customer/booking/$id/confirm'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  ApplyArtistRoute: typeof ApplyArtistRoute
   AuthRoute: typeof AuthRoute
   SearchRoute: typeof SearchRoute
+  WelcomeRoute: typeof WelcomeRoute
   ArtistSlugRoute: typeof ArtistSlugRoute
+  ArtistAuthRoute: typeof ArtistAuthRoute
   ApiAuthMeRoute: typeof ApiAuthMeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -179,6 +501,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply-artist': {
+      id: '/apply-artist'
+      path: '/apply-artist'
+      fullPath: '/apply-artist'
+      preLoaderRoute: typeof ApplyArtistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -195,6 +524,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/artist/auth': {
+      id: '/artist/auth'
+      path: '/artist/auth'
+      fullPath: '/artist/auth'
+      preLoaderRoute: typeof ArtistAuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/artist/$slug': {
       id: '/artist/$slug'
       path: '/artist/$slug'
@@ -202,25 +538,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArtistSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/support': {
-      id: '/_authenticated/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof AuthenticatedSupportRouteImport
+    '/_authenticated/_customer': {
+      id: '/_authenticated/_customer'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedCustomerRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/favourites': {
-      id: '/_authenticated/favourites'
-      path: '/favourites'
-      fullPath: '/favourites'
-      preLoaderRoute: typeof AuthenticatedFavouritesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/account': {
-      id: '/_authenticated/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+    '/_authenticated/_artist': {
+      id: '/_authenticated/_artist'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedArtistRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/auth/me': {
@@ -230,37 +559,282 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthMeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/booking/$artistId': {
-      id: '/_authenticated/booking/$artistId'
+    '/_authenticated/_customer/support': {
+      id: '/_authenticated/_customer/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof AuthenticatedCustomerSupportRouteImport
+      parentRoute: typeof AuthenticatedCustomerRouteRoute
+    }
+    '/_authenticated/_customer/me': {
+      id: '/_authenticated/_customer/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof AuthenticatedCustomerMeRouteImport
+      parentRoute: typeof AuthenticatedCustomerRouteRoute
+    }
+    '/_authenticated/_customer/favourites': {
+      id: '/_authenticated/_customer/favourites'
+      path: '/favourites'
+      fullPath: '/favourites'
+      preLoaderRoute: typeof AuthenticatedCustomerFavouritesRouteImport
+      parentRoute: typeof AuthenticatedCustomerRouteRoute
+    }
+    '/_authenticated/_customer/account': {
+      id: '/_authenticated/_customer/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedCustomerAccountRouteImport
+      parentRoute: typeof AuthenticatedCustomerRouteRoute
+    }
+    '/_authenticated/_artist/settings': {
+      id: '/_authenticated/_artist/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedArtistSettingsRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/services': {
+      id: '/_authenticated/_artist/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof AuthenticatedArtistServicesRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/service-areas': {
+      id: '/_authenticated/_artist/service-areas'
+      path: '/service-areas'
+      fullPath: '/service-areas'
+      preLoaderRoute: typeof AuthenticatedArtistServiceAreasRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/reviews': {
+      id: '/_authenticated/_artist/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof AuthenticatedArtistReviewsRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/profile': {
+      id: '/_authenticated/_artist/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedArtistProfileRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/portfolio': {
+      id: '/_authenticated/_artist/portfolio'
+      path: '/portfolio'
+      fullPath: '/portfolio'
+      preLoaderRoute: typeof AuthenticatedArtistPortfolioRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/notifications': {
+      id: '/_authenticated/_artist/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedArtistNotificationsRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/messages': {
+      id: '/_authenticated/_artist/messages'
+      path: '/messages'
+      fullPath: '/messages'
+      preLoaderRoute: typeof AuthenticatedArtistMessagesRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/earnings': {
+      id: '/_authenticated/_artist/earnings'
+      path: '/earnings'
+      fullPath: '/earnings'
+      preLoaderRoute: typeof AuthenticatedArtistEarningsRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/dashboard': {
+      id: '/_authenticated/_artist/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedArtistDashboardRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/bookings': {
+      id: '/_authenticated/_artist/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof AuthenticatedArtistBookingsRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_artist/availability': {
+      id: '/_authenticated/_artist/availability'
+      path: '/availability'
+      fullPath: '/availability'
+      preLoaderRoute: typeof AuthenticatedArtistAvailabilityRouteImport
+      parentRoute: typeof AuthenticatedArtistRouteRoute
+    }
+    '/_authenticated/_customer/me/': {
+      id: '/_authenticated/_customer/me/'
+      path: '/'
+      fullPath: '/me/'
+      preLoaderRoute: typeof AuthenticatedCustomerMeIndexRouteImport
+      parentRoute: typeof AuthenticatedCustomerMeRoute
+    }
+    '/_authenticated/_customer/me/reviews': {
+      id: '/_authenticated/_customer/me/reviews'
+      path: '/reviews'
+      fullPath: '/me/reviews'
+      preLoaderRoute: typeof AuthenticatedCustomerMeReviewsRouteImport
+      parentRoute: typeof AuthenticatedCustomerMeRoute
+    }
+    '/_authenticated/_customer/me/profile': {
+      id: '/_authenticated/_customer/me/profile'
+      path: '/profile'
+      fullPath: '/me/profile'
+      preLoaderRoute: typeof AuthenticatedCustomerMeProfileRouteImport
+      parentRoute: typeof AuthenticatedCustomerMeRoute
+    }
+    '/_authenticated/_customer/me/payments': {
+      id: '/_authenticated/_customer/me/payments'
+      path: '/payments'
+      fullPath: '/me/payments'
+      preLoaderRoute: typeof AuthenticatedCustomerMePaymentsRouteImport
+      parentRoute: typeof AuthenticatedCustomerMeRoute
+    }
+    '/_authenticated/_customer/me/offers': {
+      id: '/_authenticated/_customer/me/offers'
+      path: '/offers'
+      fullPath: '/me/offers'
+      preLoaderRoute: typeof AuthenticatedCustomerMeOffersRouteImport
+      parentRoute: typeof AuthenticatedCustomerMeRoute
+    }
+    '/_authenticated/_customer/me/notifications': {
+      id: '/_authenticated/_customer/me/notifications'
+      path: '/notifications'
+      fullPath: '/me/notifications'
+      preLoaderRoute: typeof AuthenticatedCustomerMeNotificationsRouteImport
+      parentRoute: typeof AuthenticatedCustomerMeRoute
+    }
+    '/_authenticated/_customer/me/near-me': {
+      id: '/_authenticated/_customer/me/near-me'
+      path: '/near-me'
+      fullPath: '/me/near-me'
+      preLoaderRoute: typeof AuthenticatedCustomerMeNearMeRouteImport
+      parentRoute: typeof AuthenticatedCustomerMeRoute
+    }
+    '/_authenticated/_customer/booking/$artistId': {
+      id: '/_authenticated/_customer/booking/$artistId'
       path: '/booking/$artistId'
       fullPath: '/booking/$artistId'
-      preLoaderRoute: typeof AuthenticatedBookingArtistIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof AuthenticatedCustomerBookingArtistIdRouteImport
+      parentRoute: typeof AuthenticatedCustomerRouteRoute
     }
-    '/_authenticated/booking/$id/confirm': {
-      id: '/_authenticated/booking/$id/confirm'
+    '/_authenticated/_customer/booking/$id/confirm': {
+      id: '/_authenticated/_customer/booking/$id/confirm'
       path: '/booking/$id/confirm'
       fullPath: '/booking/$id/confirm'
-      preLoaderRoute: typeof AuthenticatedBookingIdConfirmRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      preLoaderRoute: typeof AuthenticatedCustomerBookingIdConfirmRouteImport
+      parentRoute: typeof AuthenticatedCustomerRouteRoute
     }
   }
 }
 
+interface AuthenticatedArtistRouteRouteChildren {
+  AuthenticatedArtistAvailabilityRoute: typeof AuthenticatedArtistAvailabilityRoute
+  AuthenticatedArtistBookingsRoute: typeof AuthenticatedArtistBookingsRoute
+  AuthenticatedArtistDashboardRoute: typeof AuthenticatedArtistDashboardRoute
+  AuthenticatedArtistEarningsRoute: typeof AuthenticatedArtistEarningsRoute
+  AuthenticatedArtistMessagesRoute: typeof AuthenticatedArtistMessagesRoute
+  AuthenticatedArtistNotificationsRoute: typeof AuthenticatedArtistNotificationsRoute
+  AuthenticatedArtistPortfolioRoute: typeof AuthenticatedArtistPortfolioRoute
+  AuthenticatedArtistProfileRoute: typeof AuthenticatedArtistProfileRoute
+  AuthenticatedArtistReviewsRoute: typeof AuthenticatedArtistReviewsRoute
+  AuthenticatedArtistServiceAreasRoute: typeof AuthenticatedArtistServiceAreasRoute
+  AuthenticatedArtistServicesRoute: typeof AuthenticatedArtistServicesRoute
+  AuthenticatedArtistSettingsRoute: typeof AuthenticatedArtistSettingsRoute
+}
+
+const AuthenticatedArtistRouteRouteChildren: AuthenticatedArtistRouteRouteChildren =
+  {
+    AuthenticatedArtistAvailabilityRoute: AuthenticatedArtistAvailabilityRoute,
+    AuthenticatedArtistBookingsRoute: AuthenticatedArtistBookingsRoute,
+    AuthenticatedArtistDashboardRoute: AuthenticatedArtistDashboardRoute,
+    AuthenticatedArtistEarningsRoute: AuthenticatedArtistEarningsRoute,
+    AuthenticatedArtistMessagesRoute: AuthenticatedArtistMessagesRoute,
+    AuthenticatedArtistNotificationsRoute:
+      AuthenticatedArtistNotificationsRoute,
+    AuthenticatedArtistPortfolioRoute: AuthenticatedArtistPortfolioRoute,
+    AuthenticatedArtistProfileRoute: AuthenticatedArtistProfileRoute,
+    AuthenticatedArtistReviewsRoute: AuthenticatedArtistReviewsRoute,
+    AuthenticatedArtistServiceAreasRoute: AuthenticatedArtistServiceAreasRoute,
+    AuthenticatedArtistServicesRoute: AuthenticatedArtistServicesRoute,
+    AuthenticatedArtistSettingsRoute: AuthenticatedArtistSettingsRoute,
+  }
+
+const AuthenticatedArtistRouteRouteWithChildren =
+  AuthenticatedArtistRouteRoute._addFileChildren(
+    AuthenticatedArtistRouteRouteChildren,
+  )
+
+interface AuthenticatedCustomerMeRouteChildren {
+  AuthenticatedCustomerMeNearMeRoute: typeof AuthenticatedCustomerMeNearMeRoute
+  AuthenticatedCustomerMeNotificationsRoute: typeof AuthenticatedCustomerMeNotificationsRoute
+  AuthenticatedCustomerMeOffersRoute: typeof AuthenticatedCustomerMeOffersRoute
+  AuthenticatedCustomerMePaymentsRoute: typeof AuthenticatedCustomerMePaymentsRoute
+  AuthenticatedCustomerMeProfileRoute: typeof AuthenticatedCustomerMeProfileRoute
+  AuthenticatedCustomerMeReviewsRoute: typeof AuthenticatedCustomerMeReviewsRoute
+  AuthenticatedCustomerMeIndexRoute: typeof AuthenticatedCustomerMeIndexRoute
+}
+
+const AuthenticatedCustomerMeRouteChildren: AuthenticatedCustomerMeRouteChildren =
+  {
+    AuthenticatedCustomerMeNearMeRoute: AuthenticatedCustomerMeNearMeRoute,
+    AuthenticatedCustomerMeNotificationsRoute:
+      AuthenticatedCustomerMeNotificationsRoute,
+    AuthenticatedCustomerMeOffersRoute: AuthenticatedCustomerMeOffersRoute,
+    AuthenticatedCustomerMePaymentsRoute: AuthenticatedCustomerMePaymentsRoute,
+    AuthenticatedCustomerMeProfileRoute: AuthenticatedCustomerMeProfileRoute,
+    AuthenticatedCustomerMeReviewsRoute: AuthenticatedCustomerMeReviewsRoute,
+    AuthenticatedCustomerMeIndexRoute: AuthenticatedCustomerMeIndexRoute,
+  }
+
+const AuthenticatedCustomerMeRouteWithChildren =
+  AuthenticatedCustomerMeRoute._addFileChildren(
+    AuthenticatedCustomerMeRouteChildren,
+  )
+
+interface AuthenticatedCustomerRouteRouteChildren {
+  AuthenticatedCustomerAccountRoute: typeof AuthenticatedCustomerAccountRoute
+  AuthenticatedCustomerFavouritesRoute: typeof AuthenticatedCustomerFavouritesRoute
+  AuthenticatedCustomerMeRoute: typeof AuthenticatedCustomerMeRouteWithChildren
+  AuthenticatedCustomerSupportRoute: typeof AuthenticatedCustomerSupportRoute
+  AuthenticatedCustomerBookingArtistIdRoute: typeof AuthenticatedCustomerBookingArtistIdRoute
+  AuthenticatedCustomerBookingIdConfirmRoute: typeof AuthenticatedCustomerBookingIdConfirmRoute
+}
+
+const AuthenticatedCustomerRouteRouteChildren: AuthenticatedCustomerRouteRouteChildren =
+  {
+    AuthenticatedCustomerAccountRoute: AuthenticatedCustomerAccountRoute,
+    AuthenticatedCustomerFavouritesRoute: AuthenticatedCustomerFavouritesRoute,
+    AuthenticatedCustomerMeRoute: AuthenticatedCustomerMeRouteWithChildren,
+    AuthenticatedCustomerSupportRoute: AuthenticatedCustomerSupportRoute,
+    AuthenticatedCustomerBookingArtistIdRoute:
+      AuthenticatedCustomerBookingArtistIdRoute,
+    AuthenticatedCustomerBookingIdConfirmRoute:
+      AuthenticatedCustomerBookingIdConfirmRoute,
+  }
+
+const AuthenticatedCustomerRouteRouteWithChildren =
+  AuthenticatedCustomerRouteRoute._addFileChildren(
+    AuthenticatedCustomerRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
-  AuthenticatedFavouritesRoute: typeof AuthenticatedFavouritesRoute
-  AuthenticatedSupportRoute: typeof AuthenticatedSupportRoute
-  AuthenticatedBookingArtistIdRoute: typeof AuthenticatedBookingArtistIdRoute
-  AuthenticatedBookingIdConfirmRoute: typeof AuthenticatedBookingIdConfirmRoute
+  AuthenticatedArtistRouteRoute: typeof AuthenticatedArtistRouteRouteWithChildren
+  AuthenticatedCustomerRouteRoute: typeof AuthenticatedCustomerRouteRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
-  AuthenticatedFavouritesRoute: AuthenticatedFavouritesRoute,
-  AuthenticatedSupportRoute: AuthenticatedSupportRoute,
-  AuthenticatedBookingArtistIdRoute: AuthenticatedBookingArtistIdRoute,
-  AuthenticatedBookingIdConfirmRoute: AuthenticatedBookingIdConfirmRoute,
+  AuthenticatedArtistRouteRoute: AuthenticatedArtistRouteRouteWithChildren,
+  AuthenticatedCustomerRouteRoute: AuthenticatedCustomerRouteRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -269,9 +843,12 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  ApplyArtistRoute: ApplyArtistRoute,
   AuthRoute: AuthRoute,
   SearchRoute: SearchRoute,
+  WelcomeRoute: WelcomeRoute,
   ArtistSlugRoute: ArtistSlugRoute,
+  ArtistAuthRoute: ArtistAuthRoute,
   ApiAuthMeRoute: ApiAuthMeRoute,
 }
 export const routeTree = rootRouteImport

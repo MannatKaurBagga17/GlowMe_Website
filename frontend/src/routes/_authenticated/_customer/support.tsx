@@ -2,12 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSuspenseQuery, queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { listSupportThreads, createSupportThread, getSupportThread, replySupportThread } from "@/lib/glowme.functions";
-import { SiteHeader } from "@/components/site-header";
+import { CustomerShell } from "@/components/customer/customer-shell";
 import { MessageCircle, Phone } from "lucide-react";
 
 const threadsQO = queryOptions({ queryKey: ["support-threads"], queryFn: () => listSupportThreads() });
 
-export const Route = createFileRoute("/_authenticated/support")({
+export const Route = createFileRoute("/_authenticated/_customer/support")({
   head: () => ({ meta: [{ title: "Support — GlowMe" }] }),
   loader: ({ context }) => { context.queryClient.ensureQueryData(threadsQO); },
   errorComponent: ({ error }) => <div className="p-8 text-destructive">{String(error?.message ?? error)}</div>,
@@ -32,9 +32,8 @@ function Support() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <div className="mx-auto max-w-5xl px-4 py-8">
+    <CustomerShell title="Messages & Support">
+      <div className="mx-auto max-w-5xl">
         <h1 className="font-serif text-3xl">Support</h1>
         <p className="mt-1 text-muted-foreground">Chat with us in-app, or reach out on WhatsApp/phone.</p>
 
@@ -45,7 +44,7 @@ function Support() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
           <aside className="space-y-2">
-            <div className="rounded-xl border border-border bg-card p-3">
+            <div className="rounded-2xl border border-primary/15 bg-card/60 p-3 backdrop-blur-xl">
               <h3 className="text-sm font-medium">Start a new chat</h3>
               <input value={subject} onChange={e => setSubject(e.target.value)} placeholder="Subject" className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm" />
               <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="How can we help?" rows={3} className="mt-2 w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm" />
@@ -63,7 +62,7 @@ function Support() {
           <div>{active ? <Thread id={active} /> : <div className="rounded-xl border border-dashed border-border p-12 text-center text-muted-foreground">Pick a chat or start a new one.</div>}</div>
         </div>
       </div>
-    </div>
+    </CustomerShell>
   );
 }
 

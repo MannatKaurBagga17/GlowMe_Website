@@ -14,6 +14,116 @@ export type Database = {
   }
   public: {
     Tables: {
+      artist_applications: {
+        Row: {
+          aadhaar_number: string
+          address_proof: string | null
+          area: string
+          bank_account: string
+          city: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          ifsc: string
+          pincode: string
+          portfolio_link: string
+          services_pricing: string
+          specialities: string[]
+          studio_address: string
+          studio_photos: string | null
+          upi_id: string
+          whatsapp: string
+          work_photos: string | null
+          working_days: string
+          working_hours: string
+          years_experience: number
+        }
+        Insert: {
+          aadhaar_number: string
+          address_proof?: string | null
+          area: string
+          bank_account: string
+          city: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          ifsc: string
+          pincode: string
+          portfolio_link: string
+          services_pricing: string
+          specialities?: string[]
+          studio_address: string
+          studio_photos?: string | null
+          upi_id: string
+          whatsapp: string
+          work_photos?: string | null
+          working_days: string
+          working_hours: string
+          years_experience?: number
+        }
+        Update: {
+          aadhaar_number?: string
+          address_proof?: string | null
+          area?: string
+          bank_account?: string
+          city?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          ifsc?: string
+          pincode?: string
+          portfolio_link?: string
+          services_pricing?: string
+          specialities?: string[]
+          studio_address?: string
+          studio_photos?: string | null
+          upi_id?: string
+          whatsapp?: string
+          work_photos?: string | null
+          working_days?: string
+          working_hours?: string
+          years_experience?: number
+        }
+        Relationships: []
+      }
+      artist_working_hours: {
+        Row: {
+          artist_id: string
+          end_time: string
+          id: string
+          is_open: boolean
+          start_time: string
+          weekday: number
+        }
+        Insert: {
+          artist_id: string
+          end_time?: string
+          id?: string
+          is_open?: boolean
+          start_time?: string
+          weekday: number
+        }
+        Update: {
+          artist_id?: string
+          end_time?: string
+          id?: string
+          is_open?: boolean
+          start_time?: string
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artist_working_hours_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artists: {
         Row: {
           area: string | null
@@ -24,12 +134,17 @@ export type Database = {
           cancellation_policy: string
           city: string
           created_at: string
+          email: string | null
           hero_image_url: string | null
           id: string
+          languages: string[]
           name: string
           offers_at_home: boolean
           offers_studio: boolean
+          owner_id: string | null
+          phone: string | null
           review_count: number
+          service_radius_km: number
           slug: string
           specialties: string[]
           tagline: string | null
@@ -46,12 +161,17 @@ export type Database = {
           cancellation_policy?: string
           city: string
           created_at?: string
+          email?: string | null
           hero_image_url?: string | null
           id?: string
+          languages?: string[]
           name: string
           offers_at_home?: boolean
           offers_studio?: boolean
+          owner_id?: string | null
+          phone?: string | null
           review_count?: number
+          service_radius_km?: number
           slug: string
           specialties?: string[]
           tagline?: string | null
@@ -68,12 +188,17 @@ export type Database = {
           cancellation_policy?: string
           city?: string
           created_at?: string
+          email?: string | null
           hero_image_url?: string | null
           id?: string
+          languages?: string[]
           name?: string
           offers_at_home?: boolean
           offers_studio?: boolean
+          owner_id?: string | null
+          phone?: string | null
           review_count?: number
+          service_radius_km?: number
           slug?: string
           specialties?: string[]
           tagline?: string | null
@@ -173,6 +298,8 @@ export type Database = {
         Row: {
           address: string | null
           artist_id: string
+          artist_response: string | null
+          artist_response_note: string | null
           cancellation_policy_snapshot: string
           cancellation_reason: string | null
           cancelled_at: string | null
@@ -188,6 +315,7 @@ export type Database = {
           notes: string | null
           paid_paise: number
           refund_paise: number
+          responded_at: string | null
           starts_at: string
           status: Database["public"]["Enums"]["booking_status"]
           total_paise: number
@@ -196,6 +324,8 @@ export type Database = {
         Insert: {
           address?: string | null
           artist_id: string
+          artist_response?: string | null
+          artist_response_note?: string | null
           cancellation_policy_snapshot: string
           cancellation_reason?: string | null
           cancelled_at?: string | null
@@ -211,6 +341,7 @@ export type Database = {
           notes?: string | null
           paid_paise?: number
           refund_paise?: number
+          responded_at?: string | null
           starts_at: string
           status?: Database["public"]["Enums"]["booking_status"]
           total_paise: number
@@ -219,6 +350,8 @@ export type Database = {
         Update: {
           address?: string | null
           artist_id?: string
+          artist_response?: string | null
+          artist_response_note?: string | null
           cancellation_policy_snapshot?: string
           cancellation_reason?: string | null
           cancelled_at?: string | null
@@ -234,6 +367,7 @@ export type Database = {
           notes?: string | null
           paid_paise?: number
           refund_paise?: number
+          responded_at?: string | null
           starts_at?: string
           status?: Database["public"]["Enums"]["booking_status"]
           total_paise?: number
@@ -325,6 +459,47 @@ export type Database = {
           },
         ]
       }
+      payout_requests: {
+        Row: {
+          amount_paise: number
+          artist_id: string
+          created_at: string
+          id: string
+          method: string
+          note: string | null
+          processed_at: string | null
+          status: string
+        }
+        Insert: {
+          amount_paise: number
+          artist_id: string
+          created_at?: string
+          id?: string
+          method?: string
+          note?: string | null
+          processed_at?: string | null
+          status?: string
+        }
+        Update: {
+          amount_paise?: number
+          artist_id?: string
+          created_at?: string
+          id?: string
+          method?: string
+          note?: string | null
+          processed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payout_requests_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portfolio_media: {
         Row: {
           artist_id: string
@@ -399,9 +574,37 @@ export type Database = {
         }
         Relationships: []
       }
+      public_reviews: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          body: string
+          created_at: string
+          id: string
+          rating: number
+        }
+        Insert: {
+          author_id?: string | null
+          author_name: string
+          body: string
+          created_at?: string
+          id?: string
+          rating: number
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          body?: string
+          created_at?: string
+          id?: string
+          rating?: number
+        }
+        Relationships: []
+      }
       reviews: {
         Row: {
           artist_id: string
+          artist_reply: string | null
           body: string | null
           booking_id: string | null
           created_at: string
@@ -413,6 +616,7 @@ export type Database = {
         }
         Insert: {
           artist_id: string
+          artist_reply?: string | null
           body?: string | null
           booking_id?: string | null
           created_at?: string
@@ -424,6 +628,7 @@ export type Database = {
         }
         Update: {
           artist_id?: string
+          artist_reply?: string | null
           body?: string | null
           booking_id?: string | null
           created_at?: string
@@ -605,6 +810,49 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_artist_contact: {
+        Args: { _artist_id: string }
+        Returns: {
+          email: string
+          phone: string
+        }[]
+      }
+      get_my_artist: {
+        Args: never
+        Returns: {
+          area: string | null
+          avatar_url: string | null
+          avg_rating: number
+          base_price_paise: number
+          bio: string | null
+          cancellation_policy: string
+          city: string
+          created_at: string
+          email: string | null
+          hero_image_url: string | null
+          id: string
+          languages: string[]
+          name: string
+          offers_at_home: boolean
+          offers_studio: boolean
+          owner_id: string | null
+          phone: string | null
+          review_count: number
+          service_radius_km: number
+          slug: string
+          specialties: string[]
+          tagline: string | null
+          updated_at: string
+          verified: boolean
+          years_experience: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "artists"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -624,7 +872,7 @@ export type Database = {
         | "no_show"
       location_type: "studio" | "at_home"
       media_kind: "photo" | "video" | "before_after"
-      payment_kind: "advance" | "full" | "balance" | "refund"
+      payment_kind: "advance" | "final" | "full" | "refund"
       payment_status:
         | "created"
         | "paid"
@@ -777,7 +1025,7 @@ export const Constants = {
       ],
       location_type: ["studio", "at_home"],
       media_kind: ["photo", "video", "before_after"],
-      payment_kind: ["advance", "full", "balance", "refund"],
+      payment_kind: ["advance", "final", "full", "refund"],
       payment_status: [
         "created",
         "paid",

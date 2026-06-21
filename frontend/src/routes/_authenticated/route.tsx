@@ -3,9 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
+    if (error || !data.user) {
+      const artistPath = ["/dashboard", "/bookings", "/availability", "/services", "/portfolio", "/service-areas", "/earnings", "/reviews", "/settings", "/profile"].some((path) => location.pathname.startsWith(path));
+      throw redirect({ to: artistPath ? "/artist/auth" : "/auth" });
+    }
     return { user: data.user };
   },
   component: () => <Outlet />,
