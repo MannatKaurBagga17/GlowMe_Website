@@ -7,7 +7,7 @@ import { CheckCircle2, Calendar, MessageCircle } from "lucide-react";
 
 const bookingQO = (id: string) => queryOptions({ queryKey: ["booking", id], queryFn: () => getBooking({ data: { id } }) });
 
-export const Route = createFileRoute("/_authenticated/booking/$id/confirm")({
+export const Route = createFileRoute("/_authenticated/_customer/booking/$id/confirm")({
   head: () => ({ meta: [{ title: "Booking confirmed — GlowMe" }] }),
   loader: ({ params, context }) => { context.queryClient.ensureQueryData(bookingQO(params.id)); },
   errorComponent: ({ error }) => <div className="p-8 text-destructive">{String(error?.message ?? error)}</div>,

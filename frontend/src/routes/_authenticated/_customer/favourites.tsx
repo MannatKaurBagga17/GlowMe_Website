@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { listFavourites } from "@/lib/glowme.functions";
-import { SiteHeader } from "@/components/site-header";
+import { CustomerShell } from "@/components/customer/customer-shell";
 import { formatINR } from "@/lib/format";
 import { Star, Heart } from "lucide-react";
 
 const favQO = queryOptions({ queryKey: ["my-favourites"], queryFn: () => listFavourites() });
 
-export const Route = createFileRoute("/_authenticated/favourites")({
+export const Route = createFileRoute("/_authenticated/_customer/favourites")({
   head: () => ({ meta: [{ title: "Saved artists — GlowMe" }] }),
   loader: ({ context }) => { context.queryClient.ensureQueryData(favQO); },
   errorComponent: ({ error }) => <div className="p-8 text-destructive">{String(error?.message ?? error)}</div>,
@@ -18,10 +18,8 @@ export const Route = createFileRoute("/_authenticated/favourites")({
 function Favourites() {
   const { data } = useSuspenseQuery(favQO);
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <h1 className="font-serif text-3xl">Saved artists</h1>
+    <CustomerShell title="Favorites">
+      <h1 className="font-serif text-3xl">Saved artists</h1>
         {data.favourites.length === 0 ? (
           <p className="mt-4 text-muted-foreground">Tap the <Heart className="inline h-4 w-4" /> on any artist to save them here.</p>
         ) : (
@@ -30,7 +28,7 @@ function Favourites() {
               const a = f.artists;
               if (!a) return null;
               return (
-                <Link key={f.artist_id} to="/artist/$slug" params={{ slug: a.slug }} className="overflow-hidden rounded-2xl border border-border bg-card transition hover:shadow-lg">
+                <Link key={f.artist_id} to="/artist/$slug" params={{ slug: a.slug }} className="overflow-hidden rounded-2xl border border-primary/15 bg-card/60 backdrop-blur-xl transition hover:border-primary/40 hover:shadow-[0_12px_40px_-12px_rgba(201,169,110,0.45)]">
                   <div className="aspect-[4/3] w-full overflow-hidden bg-muted">{a.hero_image_url && <img src={a.hero_image_url} alt={a.name} className="h-full w-full object-cover" />}</div>
                   <div className="p-4">
                     <div className="flex items-start justify-between">
@@ -44,7 +42,6 @@ function Favourites() {
             })}
           </div>
         )}
-      </div>
-    </div>
+    </CustomerShell>
   );
 }

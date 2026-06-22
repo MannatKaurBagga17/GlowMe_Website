@@ -1,15 +1,14 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listMyBookings, cancelBooking, createReview } from "@/lib/glowme.functions";
-import { SiteHeader } from "@/components/site-header";
+import { CustomerShell } from "@/components/customer/customer-shell";
 import { formatINR, formatDateTime } from "@/lib/format";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Star, LogOut } from "lucide-react";
+import { Star } from "lucide-react";
 
 const bookingsQO = queryOptions({ queryKey: ["my-bookings"], queryFn: () => listMyBookings() });
 
-export const Route = createFileRoute("/_authenticated/account")({
+export const Route = createFileRoute("/_authenticated/_customer/account")({
   head: () => ({ meta: [{ title: "My bookings — GlowMe" }] }),
   loader: ({ context }) => { context.queryClient.ensureQueryData(bookingsQO); },
   errorComponent: ({ error }) => <div className="p-8 text-destructive">{String(error?.message ?? error)}</div>,
@@ -20,31 +19,19 @@ export const Route = createFileRoute("/_authenticated/account")({
 function AccountPage() {
   const { data } = useSuspenseQuery(bookingsQO);
   const qc = useQueryClient();
-  const navigate = useNavigate();
 
   const cancelMut = useMutation({
     mutationFn: (id: string) => cancelBooking({ data: { id } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["my-bookings"] }),
   });
 
-  async function logout() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
-
   const upcoming = data.bookings.filter((b) => ["pending_payment", "confirmed"].includes(b.status));
   const past = data.bookings.filter((b) => !["pending_payment", "confirmed"].includes(b.status));
 
   return (
-    <div className="min-h-screen bg-background">
-      <SiteHeader />
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <div className="flex items-center justify-between">
-          <h1 className="font-serif text-3xl">Your bookings</h1>
-          <button onClick={logout} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"><LogOut className="h-4 w-4" /> Sign out</button>
-        </div>
+    <CustomerShell title="My Bookings">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="font-serif text-3xl">Your bookings</h1>
 
         <section className="mt-8">
           <h2 className="font-medium">Upcoming</h2>
@@ -68,13 +55,13 @@ function AccountPage() {
           )}
         </section>
       </div>
-    </div>
+    </CustomerShell>
   );
 }
 
 function BookingCard({ b, onCancel, cancelling }: { b: any; onCancel: () => void; cancelling: boolean }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
+    <div className="rounded-2xl border border-primary/15 bg-card/60 p-4 backdrop-blur-xl transition hover:border-primary/40">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2"><h3 className="font-medium">{b.artists?.name}</h3>
@@ -114,7 +101,7 @@ function PastCard({ b }: { b: any }) {
           <p className="text-sm text-muted-foreground">{formatDateTime(b.starts_at)} · <span className="capitalize">{b.status.replace("_", " ")}</span></p>
         </div>
         <div className="flex gap-2">
-          <Link to="/artist/$slug" params={{ slug: b.artists?.slug ?? "" }} className="rounded-md border border-border px-3 py-1 text-xs">Rebook</Link>
+          <Link to="/artist/$slug" params={{ slug: b.artists?.slug ?? "" }} search={{ rebook: (b.booking_items ?? []).map((i: any) => i.service_id).filter(Boolean).join(",") || undefined }} className="rounded-md border border-border px-3 py-1 text-xs">Book again</Link>
           {b.status === "completed" && <button onClick={() => setOpen(!open)} className="rounded-md bg-primary px-3 py-1 text-xs text-primary-foreground">{open ? "Cancel" : "Review"}</button>}
         </div>
       </div>

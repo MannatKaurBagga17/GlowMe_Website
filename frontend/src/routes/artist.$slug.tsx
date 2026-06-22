@@ -6,12 +6,16 @@ import { SiteHeader } from "@/components/site-header";
 import { formatINR } from "@/lib/format";
 import { Star, MapPin, BadgeCheck, Clock, Heart, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { ServiceModeModal, type ServiceMode } from "@/components/service-mode-modal";
 
 const artistQO = (slug: string) =>
   queryOptions({ queryKey: ["artist", slug], queryFn: () => getArtistBySlug({ data: { slug } }) });
 
+import { z } from "zod";
+
+const artistSearchSchema = z.object({ rebook: z.string().optional() });
+
 export const Route = createFileRoute("/artist/$slug")({
+  validateSearch: (input: Record<string, unknown>) => artistSearchSchema.parse(input),
   loader: async ({ params, context }) => {
     const data = await context.queryClient.ensureQueryData(artistQO(params.slug));
     if (!data.artist) throw notFound();
@@ -32,13 +36,15 @@ export const Route = createFileRoute("/artist/$slug")({
 
 function ArtistPage() {
   const { slug } = Route.useParams();
+  const { rebook } = Route.useSearch();
   const { data } = useSuspenseQuery(artistQO(slug));
   const navigate = useNavigate();
   const artist = data.artist!;
-  const [cart, setCart] = useState<string[]>([]);
+  const validIds = new Set<string>(data.services.map((s) => s.id));
+  const prefill = (rebook ?? "").split(",").filter((id: string) => validIds.has(id));
+  const [cart, setCart] = useState<string[]>(prefill);
   const [signedIn, setSignedIn] = useState(false);
   const [fav, setFav] = useState(false);
-  const [modeModal, setModeModal] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
@@ -62,28 +68,13 @@ function ArtistPage() {
       return;
     }
     if (cart.length === 0) return;
-    setModeModal(true);
-  }
-
-  function continueWithMode(mode: ServiceMode) {
-    setModeModal(false);
-    const params = new URLSearchParams({ services: cart.join(","), mode });
+    const params = new URLSearchParams({ services: cart.join(",") });
     navigate({ to: `/booking/${artist.id}?${params.toString()}` as never });
   }
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <ServiceModeModal
-        open={modeModal}
-        onClose={() => setModeModal(false)}
-        onSelect={continueWithMode}
-        artistName={artist.name}
-        studioAddress={artist.area ? `${artist.area}, ${artist.city}` : artist.city}
-        offersAtHome={artist.offers_at_home}
-        offersStudio={artist.offers_studio}
-      />
-
 
       <div className="relative h-72 w-full overflow-hidden bg-muted md:h-96">
         {artist.hero_image_url && <img src={artist.hero_image_url} alt={artist.name} className="h-full w-full object-cover" />}
@@ -141,7 +132,6 @@ function ArtistPage() {
                         <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
                         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {s.duration_minutes} min</span>
-                          {s.available_at_home && <span>At-home ✓</span>}
                           {s.available_at_studio && <span>Studio ✓</span>}
                         </div>
                         {s.products_used && <p className="mt-2 text-xs text-muted-foreground"><strong>Products:</strong> {s.products_used}</p>}

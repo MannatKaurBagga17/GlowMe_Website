@@ -19,6 +19,52 @@ const ListArtistsSchema = z.object({
   studio: z.boolean().optional(),
 });
 
+const DEFAULT_DAILY_CAPACITY = 10;
+const WORKING_HOUR_PATTERNS = [
+  { start: 9, end: 18, label: "9 AM – 6 PM" },
+  { start: 11, end: 20, label: "11 AM – 8 PM" },
+  { start: 7, end: 16, label: "7 AM – 4 PM" },
+];
+type AvailabilitySlotDto = {
+  id: string;
+  starts_at: string;
+  ends_at: string;
+  status: "open" | "booked" | "blocked";
+  capacity: number;
+  booked_count: number;
+  daily_capacity: number;
+  daily_booked_count: number;
+  remaining: number;
+  availability_label: string;
+  working_hours_label: string;
+  available: boolean;
+};
+
+function dateKey(value: string | Date) {
+  return new Date(value).toISOString().slice(0, 10);
+}
+
+function dayBounds(value: string | Date) {
+  const d = new Date(value);
+  d.setHours(0, 0, 0, 0);
+  const next = new Date(d);
+  next.setDate(next.getDate() + 1);
+  return { from: d.toISOString(), to: next.toISOString() };
+}
+
+function getArtistWorkingHours(artistId: string) {
+  const bucket = Array.from(artistId).reduce((sum, char) => sum + char.charCodeAt(0), 0) % WORKING_HOUR_PATTERNS.length;
+  return WORKING_HOUR_PATTERNS[bucket];
+}
+
+function parseVirtualSlot(slotId: string, artistId: string) {
+  const prefix = `virtual:${artistId}:`;
+  if (!slotId.startsWith(prefix)) return null;
+  const startsAt = new Date(slotId.slice(prefix.length));
+  if (Number.isNaN(startsAt.getTime()) || startsAt.getTime() <= Date.now()) return null;
+  return startsAt;
+}
+
 export const listArtists = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => ListArtistsSchema.parse(input ?? {}))
   .handler(async ({ data }) => {
@@ -55,7 +101,8 @@ export const listArtists = createServerFn({ method: "GET" })
 export const listCities = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin.from("artists").select("city").order("city");
-  const cities = Array.from(new Set((data ?? []).map((r) => r.city)));
+  const requiredCities = ["Chandigarh", "Ludhiana", "Bangalore"];
+  const cities = Array.from(new Set([...requiredCities, ...(data ?? []).map((r) => r.city)])).sort();
   return { cities };
 });
 
@@ -65,7 +112,7 @@ export const getArtistBySlug = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: artist, error } = await supabaseAdmin
       .from("artists")
-      .select("*")
+      .select("id, slug, name, tagline, bio, city, area, hero_image_url, avatar_url, base_price_paise, avg_rating, review_count, offers_at_home, offers_studio, verified, specialties, years_experience, cancellation_policy, languages, service_radius_km, created_at, updated_at")
       .eq("slug", data.slug)
       .maybeSingle();
     if (error) throw new Error(error.message);
@@ -91,25 +138,66 @@ export const getArtistBySlug = createServerFn({ method: "GET" })
   });
 
 export const getArtistAvailability = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => z.object({ artistId: z.string().uuid(), days: z.number().min(1).max(90).default(60) }).parse(input))
+  .inputValidator((input: unknown) => z.object({ artistId: z.string().uuid(), days: z.number().min(1).max(365).default(180) }).parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const to = new Date();
+    const from = new Date();
+    from.setHours(0, 0, 0, 0);
+    const to = new Date(from);
     to.setDate(to.getDate() + data.days);
-    const { data: slots, error } = await supabaseAdmin
-      .from("availability_slots")
-      .select("id, starts_at, ends_at, status, capacity, booked_count")
-      .eq("artist_id", data.artistId)
-      .gte("starts_at", new Date().toISOString())
-      .lte("starts_at", to.toISOString())
-      .order("starts_at");
+    const [{ data: slots, error }, { data: bookingRows, error: bookingError }] = await Promise.all([
+      supabaseAdmin
+        .from("availability_slots")
+        .select("id, starts_at, ends_at, status, capacity, booked_count")
+        .eq("artist_id", data.artistId)
+        .gte("starts_at", from.toISOString())
+        .lte("starts_at", to.toISOString())
+        .order("starts_at"),
+      supabaseAdmin
+        .from("bookings")
+        .select("starts_at, status")
+        .eq("artist_id", data.artistId)
+        .gte("starts_at", from.toISOString())
+        .lte("starts_at", to.toISOString())
+        .not("status", "in", "(cancelled,no_show)"),
+    ]);
     if (error) throw new Error(error.message);
-    const enriched = (slots ?? []).map((s) => {
-      const cap = Number((s as any).capacity ?? 10);
-      const used = Number((s as any).booked_count ?? 0);
-      const remaining = Math.max(0, cap - used);
-      return { ...s, capacity: cap, booked_count: used, remaining, available: remaining > 0 && s.status !== "blocked" };
-    });
+    if (bookingError) throw new Error(bookingError.message);
+
+    const dailyBooked = new Map<string, number>();
+    for (const b of bookingRows ?? []) dailyBooked.set(dateKey(b.starts_at), (dailyBooked.get(dateKey(b.starts_at)) ?? 0) + 1);
+
+    const workingHours = getArtistWorkingHours(data.artistId);
+    const byStart = new Map((slots ?? []).map((s) => [new Date(s.starts_at).toISOString(), s]));
+    const enriched: AvailabilitySlotDto[] = [];
+    for (let day = new Date(from); day < to; day.setDate(day.getDate() + 1)) {
+      for (let hour = workingHours.start; hour < workingHours.end; hour += 1) {
+        const starts = new Date(day);
+        starts.setHours(hour, 0, 0, 0);
+        if (starts.getTime() <= Date.now()) continue;
+        const ends = new Date(starts.getTime() + 60 * 60_000);
+        const existing = byStart.get(starts.toISOString());
+        const cap = Number((existing as any)?.capacity ?? DEFAULT_DAILY_CAPACITY);
+        const used = Number((existing as any)?.booked_count ?? 0);
+        const dailyUsed = dailyBooked.get(dateKey(starts)) ?? 0;
+        const remaining = Math.max(0, Math.min(cap - used, DEFAULT_DAILY_CAPACITY - dailyUsed));
+        const blocked = existing?.status === "blocked";
+        enriched.push({
+          id: existing?.id ?? `virtual:${data.artistId}:${starts.toISOString()}`,
+          starts_at: existing?.starts_at ?? starts.toISOString(),
+          ends_at: existing?.ends_at ?? ends.toISOString(),
+          status: blocked ? "blocked" : remaining <= 0 ? "booked" : "open",
+          capacity: cap,
+          booked_count: used,
+          daily_capacity: DEFAULT_DAILY_CAPACITY,
+          daily_booked_count: dailyUsed,
+          remaining,
+          availability_label: remaining <= 0 || blocked ? "Fully Booked" : remaining <= 3 ? "Limited Slots" : "Available",
+          working_hours_label: workingHours.label,
+          available: remaining > 0 && !blocked,
+        });
+      }
+    }
     return { slots: enriched };
   });
 
@@ -120,7 +208,7 @@ export const getArtistAvailability = createServerFn({ method: "GET" })
 const CreateBookingSchema = z.object({
   artistId: z.string().uuid(),
   serviceIds: z.array(z.string().uuid()).min(1).max(8),
-  slotId: z.string().uuid(),
+  slotId: z.string().min(1),
   locationType: z.enum(["studio", "at_home"]),
   address: z.string().max(500).optional(),
   city: z.string().max(120).optional(),
@@ -144,15 +232,31 @@ export const createBooking = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!artist) throw new Error("Artist not found");
 
-    const { data: slot } = await supabaseAdmin
-      .from("availability_slots")
-      .select("id, artist_id, starts_at, ends_at, status")
-      .eq("id", data.slotId)
-      .maybeSingle();
-    if (!slot || slot.artist_id !== data.artistId) throw new Error("Slot not found");
-    const slotCap = Number((slot as any).capacity ?? 10);
-    const slotUsed = Number((slot as any).booked_count ?? 0);
-    if (slot.status === "blocked" || slotUsed >= slotCap) throw new Error("Slot fully booked");
+    const virtualStart = parseVirtualSlot(data.slotId, data.artistId);
+    const { data: slot } = virtualStart
+      ? { data: null }
+      : await supabaseAdmin
+          .from("availability_slots")
+          .select("id, artist_id, starts_at, ends_at, status, capacity, booked_count")
+          .eq("id", data.slotId)
+          .maybeSingle();
+    if (!virtualStart && (!slot || slot.artist_id !== data.artistId)) throw new Error("Slot not found");
+    const startsAt = virtualStart?.toISOString() ?? slot!.starts_at;
+    const workingHours = getArtistWorkingHours(data.artistId);
+    const startsDate = new Date(startsAt);
+    if (startsDate.getHours() < workingHours.start || startsDate.getHours() >= workingHours.end) throw new Error("Time outside artist working hours");
+    const { from: dayFrom, to: dayTo } = dayBounds(startsAt);
+    const { count: dailyCount } = await supabaseAdmin
+      .from("bookings")
+      .select("id", { count: "exact", head: true })
+      .eq("artist_id", data.artistId)
+      .gte("starts_at", dayFrom)
+      .lt("starts_at", dayTo)
+      .not("status", "in", "(cancelled,no_show)");
+    if ((dailyCount ?? 0) >= DEFAULT_DAILY_CAPACITY) throw new Error("Date fully booked");
+    const slotCap = Number((slot as any)?.capacity ?? DEFAULT_DAILY_CAPACITY);
+    const slotUsed = Number((slot as any)?.booked_count ?? 0);
+    if (slot?.status === "blocked" || slotUsed >= slotCap) throw new Error("Slot fully booked");
 
     const { data: services } = await supabaseAdmin
       .from("services")
@@ -167,14 +271,14 @@ export const createBooking = createServerFn({ method: "POST" })
 
     const total = services.reduce((sum, s) => sum + Number(s.price_paise), 0);
     const duration = services.reduce((sum, s) => sum + s.duration_minutes, 0);
-    const endsAt = new Date(new Date(slot.starts_at).getTime() + Math.max(duration, 60) * 60_000).toISOString();
+    const endsAt = new Date(new Date(startsAt).getTime() + Math.max(duration, 60) * 60_000).toISOString();
 
     const { data: booking, error: insErr } = await supabaseAdmin
       .from("bookings")
       .insert({
         customer_id: userId,
         artist_id: data.artistId,
-        starts_at: slot.starts_at,
+        starts_at: startsAt,
         ends_at: endsAt,
         location_type: data.locationType,
         address: data.address ?? null,
@@ -201,16 +305,18 @@ export const createBooking = createServerFn({ method: "POST" })
     }));
     await supabaseAdmin.from("booking_items").insert(items);
 
-    // Increment slot capacity usage; only mark fully booked once capacity reached
-    const newCount = slotUsed + 1;
-    await supabaseAdmin
-      .from("availability_slots")
-      .update({
-        booked_count: newCount,
-        status: newCount >= slotCap ? "booked" : "open",
-        booking_id: newCount >= slotCap ? booking.id : null,
-      })
-      .eq("id", slot.id);
+    // Increment explicit slot usage when an admin-created slot exists; virtual working-hour slots stay open until daily capacity is reached.
+    if (slot) {
+      const newCount = slotUsed + 1;
+      await supabaseAdmin
+        .from("availability_slots")
+        .update({
+          booked_count: newCount,
+          status: newCount >= slotCap ? "booked" : "open",
+          booking_id: newCount >= slotCap ? booking.id : null,
+        })
+        .eq("id", slot.id);
+    }
 
     return { bookingId: booking.id };
   });
