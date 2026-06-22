@@ -122,7 +122,7 @@ export async function handleGoogleCallback(req, res, url) {
 
     // 3) Record the artist (insert on first login, refresh on return) and
     //    start a session.
-    const artist = upsertArtistFromGoogle({
+    const artist = await upsertArtistFromGoogle({
       googleId: profile.sub,
       email: profile.email,
       name: profile.name,
