@@ -44,6 +44,7 @@ import { Route as AuthenticatedCustomerMeOffersRouteImport } from './routes/_aut
 import { Route as AuthenticatedCustomerMeNotificationsRouteImport } from './routes/_authenticated/_customer/me.notifications'
 import { Route as AuthenticatedCustomerMeNearMeRouteImport } from './routes/_authenticated/_customer/me.near-me'
 import { Route as AuthenticatedCustomerBookingArtistIdRouteImport } from './routes/_authenticated/_customer/booking.$artistId'
+import { Route as AuthenticatedCustomerBookingIdPayRouteImport } from './routes/_authenticated/_customer/booking.$id.pay'
 import { Route as AuthenticatedCustomerBookingIdConfirmRouteImport } from './routes/_authenticated/_customer/booking.$id.confirm'
 
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -243,6 +244,12 @@ const AuthenticatedCustomerBookingArtistIdRoute =
     path: '/booking/$artistId',
     getParentRoute: () => AuthenticatedCustomerRouteRoute,
   } as any)
+const AuthenticatedCustomerBookingIdPayRoute =
+  AuthenticatedCustomerBookingIdPayRouteImport.update({
+    id: '/booking/$id/pay',
+    path: '/booking/$id/pay',
+    getParentRoute: () => AuthenticatedCustomerRouteRoute,
+  } as any)
 const AuthenticatedCustomerBookingIdConfirmRoute =
   AuthenticatedCustomerBookingIdConfirmRouteImport.update({
     id: '/booking/$id/confirm',
@@ -284,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/me/reviews': typeof AuthenticatedCustomerMeReviewsRoute
   '/me/': typeof AuthenticatedCustomerMeIndexRoute
   '/booking/$id/confirm': typeof AuthenticatedCustomerBookingIdConfirmRoute
+  '/booking/$id/pay': typeof AuthenticatedCustomerBookingIdPayRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -318,6 +326,7 @@ export interface FileRoutesByTo {
   '/me/reviews': typeof AuthenticatedCustomerMeReviewsRoute
   '/me': typeof AuthenticatedCustomerMeIndexRoute
   '/booking/$id/confirm': typeof AuthenticatedCustomerBookingIdConfirmRoute
+  '/booking/$id/pay': typeof AuthenticatedCustomerBookingIdPayRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -357,6 +366,7 @@ export interface FileRoutesById {
   '/_authenticated/_customer/me/reviews': typeof AuthenticatedCustomerMeReviewsRoute
   '/_authenticated/_customer/me/': typeof AuthenticatedCustomerMeIndexRoute
   '/_authenticated/_customer/booking/$id/confirm': typeof AuthenticatedCustomerBookingIdConfirmRoute
+  '/_authenticated/_customer/booking/$id/pay': typeof AuthenticatedCustomerBookingIdPayRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -394,6 +404,7 @@ export interface FileRouteTypes {
     | '/me/reviews'
     | '/me/'
     | '/booking/$id/confirm'
+    | '/booking/$id/pay'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -428,6 +439,7 @@ export interface FileRouteTypes {
     | '/me/reviews'
     | '/me'
     | '/booking/$id/confirm'
+    | '/booking/$id/pay'
   id:
     | '__root__'
     | '/'
@@ -466,6 +478,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_customer/me/reviews'
     | '/_authenticated/_customer/me/'
     | '/_authenticated/_customer/booking/$id/confirm'
+    | '/_authenticated/_customer/booking/$id/pay'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -727,6 +740,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCustomerBookingArtistIdRouteImport
       parentRoute: typeof AuthenticatedCustomerRouteRoute
     }
+    '/_authenticated/_customer/booking/$id/pay': {
+      id: '/_authenticated/_customer/booking/$id/pay'
+      path: '/booking/$id/pay'
+      fullPath: '/booking/$id/pay'
+      preLoaderRoute: typeof AuthenticatedCustomerBookingIdPayRouteImport
+      parentRoute: typeof AuthenticatedCustomerRouteRoute
+    }
     '/_authenticated/_customer/booking/$id/confirm': {
       id: '/_authenticated/_customer/booking/$id/confirm'
       path: '/booking/$id/confirm'
@@ -808,6 +828,7 @@ interface AuthenticatedCustomerRouteRouteChildren {
   AuthenticatedCustomerSupportRoute: typeof AuthenticatedCustomerSupportRoute
   AuthenticatedCustomerBookingArtistIdRoute: typeof AuthenticatedCustomerBookingArtistIdRoute
   AuthenticatedCustomerBookingIdConfirmRoute: typeof AuthenticatedCustomerBookingIdConfirmRoute
+  AuthenticatedCustomerBookingIdPayRoute: typeof AuthenticatedCustomerBookingIdPayRoute
 }
 
 const AuthenticatedCustomerRouteRouteChildren: AuthenticatedCustomerRouteRouteChildren =
@@ -820,6 +841,8 @@ const AuthenticatedCustomerRouteRouteChildren: AuthenticatedCustomerRouteRouteCh
       AuthenticatedCustomerBookingArtistIdRoute,
     AuthenticatedCustomerBookingIdConfirmRoute:
       AuthenticatedCustomerBookingIdConfirmRoute,
+    AuthenticatedCustomerBookingIdPayRoute:
+      AuthenticatedCustomerBookingIdPayRoute,
   }
 
 const AuthenticatedCustomerRouteRouteWithChildren =
