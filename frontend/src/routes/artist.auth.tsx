@@ -28,25 +28,44 @@ function ArtistAuthPage() {
   const [busy, setBusy] = useState(false);
   const [notRobot, setNotRobot] = useState(false);
 
+  async function hasArtistRow() {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return false;
+    const { data: existing, error } = await supabase.from("artists").select("id").eq("owner_id", u.user.id).maybeSingle();
+    if (error) throw error;
+    return !!existing;
+  }
+
   async function ensureArtistRow() {
     const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
+    if (!u.user) throw new Error("Please sign in to continue.");
     const uid = u.user.id;
-    const { data: existing } = await supabase.from("artists").select("id").eq("owner_id", uid).maybeSingle();
+    const { data: existing, error: readError } = await supabase.from("artists").select("id").eq("owner_id", uid).maybeSingle();
+    if (readError) throw readError;
     if (existing) return;
     const displayName = name || u.user.user_metadata?.full_name || u.user.email?.split("@")[0] || "New Artist";
     const baseSlug = displayName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || `artist-${uid.slice(0, 6)}`;
     const slug = `${baseSlug}-${uid.slice(0, 6)}`;
-    await supabase.from("artists").insert({ owner_id: uid, slug, name: displayName, city });
+    const { error: insertError } = await supabase.from("artists").insert({ owner_id: uid, slug, name: displayName, city });
+    if (insertError) throw insertError;
   }
 
-  async function routeAfterAuth() {
-    await ensureArtistRow();
+  async function routeAfterAuth(createIfMissing = true) {
+    if (createIfMissing) await ensureArtistRow();
     navigate({ to: "/dashboard" });
   }
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => { if (data.session) routeAfterAuth(); });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return;
+      const oauthPending = sessionStorage.getItem("glowme_artist_oauth_pending") === "1";
+      if (oauthPending) sessionStorage.removeItem("glowme_artist_oauth_pending");
+      if (oauthPending) {
+        await routeAfterAuth(true);
+        return;
+      }
+      if (await hasArtistRow()) await routeAfterAuth(false);
+    }).catch((e) => setErr(e instanceof Error ? e.message : "Failed to restore artist session"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -61,11 +80,16 @@ function ArtistAuthPage() {
           options: { emailRedirectTo: window.location.origin + "/artist/auth", data: { full_name: name, role: "artist" } },
         });
         if (error) throw error;
+        await routeAfterAuth(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (!(await hasArtistRow())) {
+          await supabase.auth.signOut();
+          throw new Error("No artist profile found for this login. Create an artist account first.");
+        }
+        await routeAfterAuth(false);
       }
-      await routeAfterAuth();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Failed");
     } finally {
@@ -76,6 +100,7 @@ function ArtistAuthPage() {
   async function google() {
     if (!notRobot) { setErr("Please confirm you're not a robot."); return; }
     setErr(null); setBusy(true);
+    sessionStorage.setItem("glowme_artist_oauth_pending", "1");
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/artist/auth" });
     if (result.error) { setBusy(false); setErr(result.error instanceof Error ? result.error.message : String(result.error)); }
   }

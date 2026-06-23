@@ -555,8 +555,13 @@ async function glowmeInitAuth(){
     const { data } = await sb.auth.getSession();
     mount.innerHTML='';
     if(data&&data.session){
+      let isArtist=false;
+      try{
+        const { data: artist } = await sb.from('artists').select('id').eq('owner_id', data.session.user.id).maybeSingle();
+        isArtist=!!artist;
+      }catch{}
       const wrap=document.createElement('div');wrap.className='nav-auth';
-      const dash=document.createElement('a');dash.className='nav-auth-manage';dash.textContent='Dashboard';dash.href='/dashboard';
+      const dash=document.createElement('a');dash.className='nav-auth-manage';dash.textContent=isArtist?'Artist Dashboard':'Main Menu';dash.href=isArtist?'/dashboard':'/me';
       const out=document.createElement('button');out.className='nav-auth-logout';out.textContent='Logout';
       out.addEventListener('click',async()=>{await sb.auth.signOut();glowmeInitAuth();});
       wrap.appendChild(dash);wrap.appendChild(out);mount.appendChild(wrap);

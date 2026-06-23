@@ -53,19 +53,7 @@ function WelcomePage() {
         Glow<em>Me</em>
       </h1>
       <p className="gm-w-sub">India's curated beauty marketplace. Choose how you'd like to enter.</p>
-      <div style={{display:"flex",gap:28,marginBottom:40,position:"relative",zIndex:1,flexWrap:"wrap",justifyContent:"center"}}>
-        {["Mission","Vision","Values"].map((v) => (
-          <span key={v} style={{
-            fontFamily:"'Cormorant Garamond',serif",fontStyle:"italic",
-            fontSize:14,letterSpacing:".34em",textTransform:"uppercase",
-            background:"linear-gradient(90deg,#9A7A45,#E8D5A3,#9A7A45)",
-            backgroundSize:"200% 100%",WebkitBackgroundClip:"text",backgroundClip:"text",
-            WebkitTextFillColor:"transparent",
-            animation:"gmSweep 3.4s linear infinite",
-          }}>{v}</span>
-        ))}
-      </div>
-      <style>{`@keyframes gmSweep{0%{background-position:200% 0}100%{background-position:-200% 0}}`}</style>
+      <div style={{marginBottom:40}} />
       <div className="gm-w-grid">
         <Link to="/auth" className="gm-w-card">
           <div className="gm-w-icon">✦</div>
